@@ -1,0 +1,5 @@
+- name: Deploy Tdarr
+  community.docker.docker_compose:
+    project_name: tdarr
+    state: "{{ tdarr.state }}"
+    definition: "{{ lookup('template', 'compose.yml') | from_yaml }}"

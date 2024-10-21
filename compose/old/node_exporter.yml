@@ -1,0 +1,31 @@
+docker run \
+  --name "/node_exporter" \
+  --runtime "runc" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --publish "0.0.0.0:8100:8100/tcp" \
+  --network "tmp_default" \
+  --network-alias "node_exporter" \
+  --network-alias "node-exporter" \
+  --network-alias "53736314c2dc" \
+  --hostname "53736314c2dc" \
+  --expose "8100/tcp" \
+  --expose "9100/tcp" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --label "com.docker.compose.config-hash"="0ad3c0e9f03631bcb8c0aad28f10bde5eb4590ab6f6cffbea43e807e88ae2148" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.depends_on"="" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="tmp" \
+  --label "com.docker.compose.project.config_files"="/tmp/unraid.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp" \
+  --label "com.docker.compose.service"="node-exporter" \
+  --label "com.docker.compose.version"="2.1.1" \
+  --label "maintainer"="The Prometheus Authors <prometheus-developers@googlegroups.com>" \
+  --attach stdout \
+  --attach stderr \
+  --entrypoint "/bin/node_exporter" \
+  "prom/node-exporter" \
+  

@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: libreddit-ingress
+  namespace: "{{ oracle_namespace }}"
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`"{{ domain_name }}"`)
+      kind: Rule
+      services:
+        - name: libreddit-service
+          kind: Service
+          namespace: "{{ oracle_namespace }}"
+          passHostHeader: true
+          port: 8090

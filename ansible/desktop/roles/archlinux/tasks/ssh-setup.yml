@@ -1,0 +1,30 @@
+---
+- name: Enable SSH
+  hosts: "{{ host }}"
+  become: yes
+  tasks:
+    - name: Create list variable
+      set_fact:
+        key_list: []
+    - name: Get Github SSH Keys
+      uri:
+        url: https://github.com/Guilvareux.keys
+        return_content: yes
+      register: keys
+    - name: Split keys
+      set_fact:
+        key_list: "{{ key_list + keys.content.split('\n')[:-1] }}"
+    - debug:
+          msg: "{{ key_list }}"
+    - name: Add keys to authorized_keys
+      lineinfile:
+        path: /home/paul/.ssh/ansible_authorized_keys
+        search_string: "{{ item }}"
+        state: present
+        insertafter: EOF
+        line: "{{ item }}"
+      loop: "{{ key_list }}"
+
+
+
+

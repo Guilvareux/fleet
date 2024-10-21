@@ -1,0 +1,11 @@
+---
+- name: Unraid
+  hosts: unraid
+  gather_subset: min
+  strategy: free
+  vars_files:
+    - secrets.yml
+  tasks:
+    - name: Setup Unraid
+      include_role:
+        name: unraid

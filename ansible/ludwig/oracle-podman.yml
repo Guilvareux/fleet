@@ -1,0 +1,54 @@
+---
+#- name: Setup Oracle devices
+#  hosts: oracle
+#  gather_facts: false
+#  vars_files:
+#    - secrets.yml
+#  tasks:
+#    - name: Install dependencies
+#      include_role:
+#        name: oracle
+
+- name: Deploy Ludwig Services
+  hosts: ludwig
+  become: yes
+  gather_subset: min
+  vars_files:
+    - secrets.yml
+  tasks:
+    - name: Deploy cloud services
+      include_role:
+        name: ludwig
+
+#- name: Deploy Klaus Services
+#  hosts: klaus
+#  become: yes
+#  gather_subset: min
+#  vars_files:
+#    - secrets.yml
+#  tasks:
+#    - name: Deploy cloud services
+#      include_role:
+#        name: klaus
+
+#- name: Deploy Ruben Services
+#  hosts: ruben
+#  become: yes
+#  gather_subset: min
+#  vars_files:
+#    - secrets.yml
+#  tasks:
+#    - name: Deploy cloud services
+#      include_role:
+#        name: ruben
+
+#- name: Deploy Herman Services
+#  hosts: herman
+#  become: yes
+#  gather_subset: min
+#  vars_files:
+#    - secrets.yml
+#  tasks:
+#    - name: Deploy cloud services
+#      include_role:
+#        name: herman

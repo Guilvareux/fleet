@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freshrss
+  namespace: oracle-default
+  labels:
+    app: freshrss
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: freshrss
+  template:
+    metadata:
+      labels:
+        app: freshrss
+    spec:
+      containers:
+      - name: freshrss
+        image: docker.io/freshrss/freshrss:latest
+        ports:
+        - containerPort: 8085
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: freshrss-service
+spec:
+  selector:
+    app: web
+  ports:
+    - protocol: TCP
+      port: 8085
+      targetPort: 8085

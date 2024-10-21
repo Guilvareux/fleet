@@ -1,0 +1,43 @@
+docker run \
+  --name "/traefik" \
+  --runtime "runc" \
+  --volume "/var/run/docker.sock:/var/run/docker.sock:ro" \
+  --volume "/mnt/user/appdata/traefik:/etc/traefik:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --publish "0.0.0.0:44301:443/tcp" \
+  --publish "0.0.0.0:8001:80/tcp" \
+  --publish "0.0.0.0:8183:8080/tcp" \
+  --network "podnet" \
+  --network-alias "fe2867e26155" \
+  --network-alias "traefik" \
+  --hostname "fe2867e26155" \
+  --expose "443/tcp" \
+  --expose "80/tcp" \
+  --expose "8080/tcp" \
+  --env "NJALLA_TOKEN=fbdcd28c0cc197a0dba2a136dd708f31d2c97d73" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --label "com.docker.compose.config-hash"="1599d91f4237e1e3d109597dde0de2590eeaf648adf4ff3556089b45c26f63ca" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="home" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansible7tec9hu6/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansible7tec9hu6" \
+  --label "com.docker.compose.service"="traefik" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "org.opencontainers.image.description"="A modern reverse-proxy" \
+  --label "org.opencontainers.image.documentation"="https://docs.traefik.io" \
+  --label "org.opencontainers.image.title"="Traefik" \
+  --label "org.opencontainers.image.url"="https://traefik.io" \
+  --label "org.opencontainers.image.vendor"="Traefik Labs" \
+  --label "org.opencontainers.image.version"="v2.5.7" \
+  --label "traefik.enable"="True" \
+  --label "traefik.http.routers.api.entrypoints"="web" \
+  --label "traefik.http.routers.api.middlewares"="auth@docker" \
+  --label "traefik.http.routers.api.service"="api@internal" \
+  --detach \
+  --entrypoint "/entrypoint.sh" \
+  "traefik:2.5" \
+  "--api=true" "--api.dashboard=true" "--api.insecure=true" "--global.sendanonymoususage=false" "--entrypoints.web.address=:80" "--entrypoints.websecure.address=:443" "--entrypoints.websecure.http.tls=true" "--entrypoints.websecure.http.tls.certresolver=njalla" "--entrypoints.websecure.http.tls.domains[0].main=alcock.dev" "--certificatesresolvers.njalla.acme.email=paul@alcock.dev" "--certificatesresolvers.njalla.acme.dnschallenge.provider=njalla" "--certificatesresolvers.njalla.acme.dnschallenge.delaybeforecheck=30" "--certificatesresolvers.njalla.acme.storage=/etc/traefik/acme.json" "--providers.docker.watch=true" "--providers.docker.exposedbydefault=false" 

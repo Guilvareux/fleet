@@ -1,0 +1,14 @@
+- name: Backup syslinux.cfg
+  ansible.builtin.copy:
+    src: /boot/syslinux/syslinux.cfg
+    dest: /boot/syslinux/oldsyslinux.cfg
+    remote_src: yes
+    owner: root
+    group: root
+
+- name: Intel HuC Authentication
+  ansible.builtin.replace:
+    path: /boot/syslinux/syslinux.cfg
+    regexp: '(?:i915[\.\_\=\w\d])?\K((?:(?!i915[\.\w\_\=\d]+)([\s][\w\d\/]+(?:\=[\w\d\/]+)+)?))(?=(?:i915[\.\w\_\=\d]+)?([\w\d]+(?:\=[\w\d\/]+))?)'
+    replace: '\g<1> {{ unraid.kernelparams }}\g<2>'
+

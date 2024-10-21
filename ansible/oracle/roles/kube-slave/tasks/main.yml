@@ -1,0 +1,6 @@
+- name: Join (Slaves)
+  ansible.builtin.shell: |
+    /usr/bin/kubeadm \ 
+    join {{ control_endpoint }}:{{ control_endpoint_port }} \
+    --token {{ token }} \
+    --discovery-token-unsafe-skip-ca-verification

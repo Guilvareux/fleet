@@ -1,0 +1,46 @@
+docker run \
+  --name "/radarr" \
+  --runtime "runc" \
+  --volume "/mnt/user/media/film:/movies:rw" \
+  --volume "/mnt/user/appdata/radarr:/config:rw" \
+  --volume "/mnt/user/media/downloads:/downloads:rw" \
+  --volume "9b992f0ecf94d329f0182a504c079c8bdf0ee7bd3c01aff661c4d913aaba009d:/dev/rtc:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --hostname "a9fd55491776" \
+  --expose "7878/tcp" \
+  --env "affinity:container==08ecc299cfbed442d6ca5e26b8de158bab2614b5dfb0243e062d9d9f99188bd1" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "PS1=$(whoami)@$(hostname):$(pwd)\\$ " \
+  --env "HOME=/root" \
+  --env "TERM=xterm" \
+  --env "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0" \
+  --env "XDG_CONFIG_HOME=/config/xdg" \
+  --label "build_version"="Linuxserver.io version:- 4.2.0.6438-ls66 Build-date:- 2022-08-08T10:58:22-05:00" \
+  --label "com.docker.compose.config-hash"="667b38e52e22f99ae004a5fecd2dc5abe5d6f8eb8ce24784eb485326b34c20ec" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="calico" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansiblefn26yy7i/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansiblefn26yy7i" \
+  --label "com.docker.compose.service"="radarr" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "maintainer"="Roxedus,thespad" \
+  --label "org.opencontainers.image.authors"="linuxserver.io" \
+  --label "org.opencontainers.image.created"="2022-08-08T10:58:22-05:00" \
+  --label "org.opencontainers.image.description"="[Radarr](https://github.com/Radarr/Radarr) - A fork of Sonarr to work with movies à la Couchpotato.  " \
+  --label "org.opencontainers.image.documentation"="https://docs.linuxserver.io/images/docker-radarr" \
+  --label "org.opencontainers.image.licenses"="GPL-3.0-only" \
+  --label "org.opencontainers.image.ref.name"="fdac0c3cd9f70af02b81c1c820393c653389e23d" \
+  --label "org.opencontainers.image.revision"="fdac0c3cd9f70af02b81c1c820393c653389e23d" \
+  --label "org.opencontainers.image.source"="https://github.com/linuxserver/docker-radarr" \
+  --label "org.opencontainers.image.title"="Radarr" \
+  --label "org.opencontainers.image.url"="https://github.com/linuxserver/docker-radarr/packages" \
+  --label "org.opencontainers.image.vendor"="linuxserver.io" \
+  --label "org.opencontainers.image.version"="4.2.0.6438-ls66" \
+  --detach \
+  --entrypoint "/init" \
+  "linuxserver/radarr:develop" \
+  

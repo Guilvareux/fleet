@@ -1,0 +1,44 @@
+- name: Copy Kubeadm Config
+  ansible.builtin.copy:
+    src: kubeadm-config.yaml
+    dest: kubeadm-config.yaml
+    force: no
+
+- name: Initialize Network
+  async: 240
+  poll: 10
+  ignore_errors: yes
+  ansible.builtin.shell: |
+      KUBE_CONFIG="{{ kube_config }}" \
+      /usr/bin/kubeadm init \
+      --apiserver-advertise-address "{{ kube_api }}" \
+      --pod-network-cidr {{ kube_cidr }} \
+      --certificate-key {{ cert_key }} \
+      --control-plane-endpoint {{ control_endpoint }} \
+      --token {{ token }}
+
+- name: Create Kube folder
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/.kube"
+    state: directory
+
+- name: Copy Kube Config
+  ansible.builtin.copy:
+    remote_src: yes
+    owner: ubuntu
+    group: ubuntu
+    mode: u=rw,g=r,o=r
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ kube_config }}"
+    force: yes
+
+- name: Untaint Master
+  kubernetes.core.k8s_taint:
+    kubeconfig: "{{ kube_config }}"
+    state: absent
+    name: klaus
+    taints:
+      - effect: NoSchedule
+        key: "node-role.kubernetes.io/master"
+      - effect: NoSchedule
+        key: "node-role.kubernetes.io/control-plane"

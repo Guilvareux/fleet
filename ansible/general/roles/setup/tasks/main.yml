@@ -1,0 +1,22 @@
+- name: Setup SSH
+  become: yes
+  import_tasks: ssh.yml
+
+- name: Setup Debian
+  become: yes
+  import_tasks: debian.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+      #
+      #- name: Setup Redhat
+      #  become: yes
+      #  import_tasks: redhat.yml
+      #  when: ansible_facts['os_family']|lower == 'redhat'
+
+- name: Setup Alpine
+  become: yes
+  import_tasks: alpine.yml
+  when: ansible_facts['os_family']|lower == 'alpine'
+
+- name: Setup venv
+  become: yes
+  import_tasks: venv.yml

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: libreddit-pv
+  namespace: oracle-default
+  labels:
+    type: local
+spec:
+  storageClassName: fast
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/home/paul/kubernetes/libreddit"
+    type: Directory
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: libreddit-pvc
+  namespace: oracle-default
+spec:
+  storageClassName: fast
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

@@ -1,0 +1,35 @@
+cloud-ingress: ludwig
+
+oracle_namespace: oracle-default
+domain_name: klaus.alcock.dev
+config_path: /etc/kubernetes/pod-configs
+kube_state: absent
+kube_api: 10.0.10.223
+kube_cidr: 12.0.0.0/16
+control_endpoint: 10.0.10.223
+control_endpoint_port: 6443
+cert_key: a145a0f29bb0f073ffa3d224c38abd295d2b6245cd2258fdd045a6095ffd6e40
+token: gefv7q.d6gaw4wzlf54rtbj
+api_cert_addr: null
+kube_config: "{{ ansible_facts['user_dir'] }}/.kube/config"
+manifests:
+  resources:
+    - oracle-res.yaml
+    - traefik-res.yaml
+    - libreddit-res.yaml
+    - authelia-res.yaml
+    - jenkins-res.yaml
+    - jenkins-crd.yaml
+  services:
+    - traefik-manual.yaml
+    - libreddit.yaml
+    - searx.yaml
+    - jenkins.yaml
+    - authelia.yaml
+    - jenkins-operator.yaml
+  ingress:
+    - authelia-middleware.yaml
+    - authelia-ingress.yaml
+    - libreddit-ingress.yaml
+    - searx-ingress.yaml
+    - jenkins-ingress.yaml

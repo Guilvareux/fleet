@@ -1,0 +1,5 @@
+- name: Start with docker-compose
+  community.docker.docker_compose:
+    docker_host: unix://var/run/podman/podman.sock
+    project_name: ludwig
+    definition: "{{ lookup('template', 'ingress-compose.yml') | from_yaml }}"

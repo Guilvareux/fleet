@@ -1,0 +1,19 @@
+- name: Ensure deps installed
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - podman
+    - podman-compose
+
+- name: Ensure podman.socket is running
+  ansible.builtin.service:
+    name: podman.socket
+    enabled: yes
+    state: started
+
+- name: Start with docker-compose
+  community.docker.docker_compose:
+    docker_host: unix://var/run/podman/podman.sock
+    project_name: omen
+    definition: "{{ lookup('file', 'omen-compose.yml') | from_yaml }}"

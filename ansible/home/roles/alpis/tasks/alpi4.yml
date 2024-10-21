@@ -1,0 +1,7 @@
+---
+- name: Deploy alpi4
+  community.docker.docker_compose:
+    project_name: alpi4
+    docker_host: unix:///var/run/podman/podman.sock
+    state: present
+    definition: "{{ lookup('template', 'alpi4.yml') | from_yaml }}"

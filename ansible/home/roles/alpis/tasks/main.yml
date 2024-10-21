@@ -1,0 +1,21 @@
+---
+#- name: Create Podman network
+#  containers.podman.podman_network:
+#    name: "{{ br_name }}"
+#    subnet: 172.22.0.0/16
+
+- name: Run alpi8
+  async: 120
+  poll: 0
+  import_tasks: alpi8.yml
+  when: ansible_facts['hostname'] == "alpi8"
+
+- name: Run alpi4
+  async: 120
+  poll: 0
+  import_tasks: alpi4.yml
+  when: ansible_facts['hostname'] == "alpi4"
+
+#- name: LBU Commit
+#  community.general.lbu:
+#    commit: yes

@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-ingress-route
+  namespace: oracle-default
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Method(`GET`)
+      kind: Rule
+      services:
+        - name: libreddit-service
+          kind: Service
+          port: 8090

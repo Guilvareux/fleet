@@ -1,0 +1,23 @@
+- name: Test Transmission
+  community.docker.docker_compose:
+    project_name: transmission
+    definition: 
+      version: '3.1'
+      services: 
+        transmission: "{{ (lookup('template', 'unraid-compose.yml')|from_yaml).services.transmission }}"
+
+- name: Test Prowlarr
+  community.docker.docker_compose:
+    project_name: prowlarr
+    definition: 
+      version: '3.1'
+      services: 
+        prowlarr: "{{ (lookup('template', 'unraid-compose.yml')|from_yaml).services.prowlarr }}"
+
+- name: Test Sonarr
+  community.docker.docker_compose:
+    project_name: sonarr
+    definition: 
+      version: '3.1'
+      services: 
+        sonarr: "{{ (lookup('template', 'unraid-compose.yml')|from_yaml).services.sonarr }}"

@@ -1,0 +1,12 @@
+---
+- name: Deploy home services
+  hosts: alpis
+  strategy: free
+  gather_subset: min
+  vars_files:
+    - secrets.yml
+  tasks:
+
+    - name: Setup alpis
+      include_role:
+        name: alpis

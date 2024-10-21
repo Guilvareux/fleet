@@ -1,0 +1,24 @@
+---
+- name: Deploy home services
+  hosts: unraid
+  gather_subset: min
+  vars_files:
+    - secrets.yml
+  tasks:
+    - name: Configure unraid
+      include_role:
+        name: unraid
+
+    - name: Configure unraid
+      include_role:
+        name: tdarr
+
+          #- name: Deploy pi services
+          #  hosts: alpis
+          #  gather_subset: min
+          #  vars_files:
+          #    - secrets.yml
+          #  tasks:
+          #    - name: Deploy cloud services
+          #      include_role:
+          #        name: cloud-podman

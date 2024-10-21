@@ -1,0 +1,21 @@
+- name: Create venv folder
+  ansible.builtin.file:
+    path: "{{ venv.path }}"
+    state: directory
+
+- name: Create venv
+  ansible.builtin.command: "python3 -m venv {{ venv.path }}"
+  args:
+    creates: "{{ venv.path }}/bin/python3"
+
+- name: Init Pip
+  ansible.builtin.pip:
+    name: pip
+    virtualenv: "{{ venv.path }}"
+    extra_args: --upgrade
+
+- name: Install requests for pip
+  ansible.builtin.pip:
+    name: 
+      - requests
+    virtualenv: "{{ venv.path }}"

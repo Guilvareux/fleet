@@ -1,0 +1,16 @@
+- name: Ensurepip
+  ansible.builtin.shell:
+    cmd: "python3 -m ensurepip"
+
+- name: Upgrade pip
+  ansible.builtin.shell:
+    cmd: "python3 -m pip install --upgrade pip"
+
+- name: Install necessary
+  ansible.builtin.pip:
+    name: "{{ item }}"
+  loop:
+    - requests
+    - docker
+    - docker-compose
+

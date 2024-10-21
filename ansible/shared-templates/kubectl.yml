@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  kubectl:
+    image: bitnami/kubectl
+    container_name: kubectl
+    restart: never
+    network_mode: host
+    environment:
+      TZ: Europe/London
+

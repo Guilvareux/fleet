@@ -1,0 +1,45 @@
+#!/bin/bash
+# Start the Management Utility
+/usr/local/sbin/emhttp &
+modprobe i915
+
+# Power-efficient CPU Govenor
+/etc/rc.d/rc/cpufreq powersave
+
+# Power Efficient Ethernet
+for i in /sys/class/net/eth?; do dev=$(basename $i); [[ $(echo $(ethtool --show-eee $dev 2> /dev/null) | grep -c "Supported EEE link modes: 1") -eq 1 ]] && ethtool --set-eee $dev eee on; done
+
+# Disable Wake-on-lan
+for i in /sys/class/net/eth?; do ethtool -s  $(basename $i) wol d; done
+
+# Enable SATA link power management
+echo med_power_with_dipm | tee /sys/class/scsi_host/host*/link_power_management_policy
+
+# Runtime PM for I2C Adapter (i915 gmbus dpb)
+#echo auto | tee /sys/bus/i2c/devices/i2c-*/device/power/control
+
+# Autosuspend for USB device
+echo auto | tee /sys/bus/usb/devices/*/power/control
+
+# Runtime PM for disk
+#echo auto | tee /sys/block/sd*/device/power/control
+
+# Runtime PM for PCI devices
+#echo auto | tee /sys/bus/pci/devices/????:??:??.?/power/control
+
+# Runtime PM for ATA devices
+#echo auto | tee /sys/bus/pci/devices/????:??:??.?/ata*/power/control
+
+# Permission for GPU?
+#chmod -R 777 /dev/dri
+
+# Nvidia power management
+echo '# Enable runtime PM for NVIDIA VGA/3D controller devices on driver bind
+ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="auto"
+ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="auto"
+
+# Disable runtime PM for NVIDIA VGA/3D controller devices on driver unbind
+ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="on"
+ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="on"' >> /etc/udev/rules.d/80-nvidia-pm.rules
+
+echo 'options nvidia "NVreg_DynamicPowerManagement=0x02"' >> /etc/modeprobe.d/nvidia-pm.conf

@@ -1,0 +1,7 @@
+- name: Start services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - podman

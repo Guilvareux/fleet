@@ -1,0 +1,15 @@
+- name: iptables Rule
+  ansible.builtin.iptables:
+    state: absent
+    jump: REJECT
+    chain: INPUT
+    reject_with: icmp-host-prohibited
+  become: yes
+
+- name: iptables Rule
+  ansible.builtin.iptables:
+    state: absent
+    jump: REJECT
+    chain: FORWARD
+    reject_with: icmp-host-prohibited
+  become: yes

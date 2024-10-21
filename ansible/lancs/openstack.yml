@@ -1,0 +1,14 @@
+---
+- name: Setup Playbook
+  hosts: tiny
+  become: false
+  gather_facts: false
+  vars_files:
+    - secrets.yml
+  environment:
+    OS_IDENTITY_API_VERSION: 3
+    OS_IMAGE_API_VERSION: 2
+  tasks:
+    - name: Run Openstack tasks
+      include_role:
+        name: tiny 

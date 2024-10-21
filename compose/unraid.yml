@@ -1,0 +1,369 @@
+version: '3.9'
+services:
+  gluetunvpn:
+    image: docker.io/qmcgaw/gluetun
+    container_name: gluetunvpn
+    cap_add: 
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - TZ=Europe/London
+      - FIREWALL=on
+      - LOG_LEVEL=info
+      - HTTPPROXY=on
+      - HTTPPROXY_PORT=8888
+      - HTTPPROXY_USER=paul
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=wireguard
+      #- VPN_ENDPOINT_IP=149.40.48.65
+      #- VPN_ENDPOINT_PORT=51820
+      - SERVER_COUNTRIES=United Kingdom
+      - DNS_ADDRESS=10.2.0.1
+      - WIREGUARD_PRIVATE_KEY=qF8QtAzmTGJVzzDo8wADQMWAm7EozE75eNq+rmTipGw=
+      - WIREGUARD_PUBLIC_KEY=DgzYjQOQBgtBFUeyj3bVXpzl0qZE1I3/rk/IDS1b8kg=      
+      - WIREGUARD_ADDRESSES=10.2.0.2/32
+      - VPN_INTERFACE=tun0
+    labels:
+      traefik.enable: false
+    restart: always
+    ports:
+      - 6767:6767
+      - 6789:6789
+      - 7878:7878
+      - 8010:8010
+      - 8080:8080
+      - 8085:8085
+      - 8086:8086
+      - 8087:8087
+      - 8090:8090
+      - 8989:8989
+      - 9091:9091
+      - 9696:9696
+      - 51413:51413
+    networks:
+      pod-net:
+        ipv4_address: 172.22.0.5
+    volumes:
+      - "/mnt/user/appdata/gluetun:/gluetun"
+
+  jellyfin:
+    image: docker.io/linuxserver/jellyfin
+    container_name: jellyfin
+    restart: unless-stopped
+    network_mode: "host"
+    environment:
+      NVIDIA_VISIBLE_DEVICES: "GPU-87a50023-7121-519c-3021-545b913062c8"
+      PUID: 281
+      PGID: 281
+    ports:
+      - 8096:8096
+      - 8920:8920
+      - 1900:1900
+    tmpfs: /transcode
+    volumes:
+      - /mnt/user/appdata/jellyfin:/config:rw
+      - /mnt/user/media/tiktok:/tiktok:rw
+      - /mnt/user/media/film:/movies:rw
+      - /mnt/user/media/music:/music:rw
+      - /mnt/user/media/books:/books:rw
+      - /mnt/user/media/tv:/tv:rw
+      - /mnt/user/media/psychology:/psychology:rw
+    devices:
+      - /dev/dri/card0
+      #- /dev/dri/card1
+      - /dev/dri/renderD128
+      #- /dev/dri/renderD129
+    labels:
+      traefik.enable: true
+      traefik.docker.network: podnet
+      traefik.http.routers.jellyfin.rule: "Host(`video.alcock.dev`)"
+      traefik.http.routers.jellyfin.entrypoints: "websecure"
+      traefik.http.routers.jellyfin.tls: true
+      traefik.http.routers.jellyfin.tls.certresolver: njalla
+      traefik.http.services.jellyfin.loadbalancer.server.port: 8096
+
+        #nextcloud:
+        #  image: docker.io/linuxserver/nextcloud
+        #  container_name: nextcloud
+        #  restart: unless-stopped
+        #  networks:
+        #    pod-net:
+        #      ipv4_address: 172.22.0.44
+        #  ports:
+        #    - 444:444
+        #    - 8011:80
+        #  volumes:
+        #    - /mnt/user/appdata/nextcloud:/config
+        #    - /mnt/user/appdata:/data
+        #  labels:
+        #    traefik.http.routers.nextcloud.rule: "Host(`files.alcock.dev`)"
+        #    traefik.http.routers.nextcloud.entrypoints: "websecure"
+        #    traefik.http.routers.nextcloud.tls.certresolver: njalla
+        #    traefik.http.services.nextcloud.loadbalancer.server.port: 80
+        #    traefik.http.routers.nextcloud.tls: true
+        #    traefik.docker.network: podnet
+        #    traefik.enable: true
+
+        #mariadb:
+        #  image: linuxserver/mariadb
+        #  container_name: mariadb
+        #  restart: unless-stopped
+        #  networks:
+        #    pod-net:
+        #      ipv4_address: 172.22.0.6
+        #  environment:
+        #    PUID: 99
+        #    PGID: 100
+        #    MYSQL_ROOT_PASSWORD: "{{ mariadb.password }}"
+        #  ports:
+        #    - 3306:3306
+        #  volumes:
+        #    - "/mnt/user/appdata/mariadb:/config"
+
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    environment:
+      TZ: Europe/London
+      PUID: 1000
+      PGID: 1000
+    restart: unless-stopped
+    network_mode: container:gluetunvpn
+    volumes:
+      - /dev/rtc
+      - "/mnt/user/appdata/sonarr:/config:rw"
+      - "/mnt/user/media/tv:/tv:rw"
+      - "/mnt/user/media/downloads:/downloads:rw"
+    depends_on:
+      - gluetunvpn
+
+  radarr:
+    image: linuxserver/radarr:develop
+    container_name: radarr
+    environment:
+      TZ: Europe/London
+      PUID: 1000
+      PGID: 1000
+    restart: unless-stopped
+    network_mode: container:gluetunvpn
+    volumes:
+      - /dev/rtc
+      - "/mnt/user/appdata/radarr:/config:rw"
+      - "/mnt/user/media/film:/movies:rw"
+      - "/mnt/user/media/downloads:/downloads:rw"
+    depends_on:
+      - gluetunvpn
+
+  prowlarr:
+    image: ghcr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr
+    restart: unless-stopped
+    network_mode: container:gluetunvpn
+    environment:
+      TZ: Europe/London
+      PUID: 1000
+      PGID: 1000
+    volumes:
+      - "/mnt/user/appdata/prowlarr:/config:rw"
+    depends_on:
+      - gluetunvpn
+
+  transmission:
+    image: linuxserver/transmission
+    container_name: transmission
+    restart: unless-stopped
+    environment:
+      TZ: Europe/London
+      PUID: 1000
+      PGID: 1000
+    network_mode: container:gluetunvpn
+    volumes:
+      - "/mnt/user/appdata/transmission:/config:rw"
+      - "/mnt/user/media/downloads:/downloads:rw"
+      - "/mnt/user/encode/torrent:/encode:rw"
+      - "/mnt/user/media/downloads:/watch:rw"
+    depends_on:
+      - gluetunvpn
+
+  nzbget:
+    image: linuxserver/nzbget
+    container_name: nzbget
+    restart: unless-stopped
+    network_mode: container:gluetunvpn
+    environment:
+      TZ: Europe/London
+      PUID: 1000
+      PGID: 1000
+    volumes:
+      - "/mnt/user/appdata/nzbget:/config:rw"
+      - "/mnt/user/encode/nzbget:/encode:rw" 
+      - "/mnt/user/media/downloads:/downloads:rw"
+    depends_on:
+      - gluetunvpn
+
+  ombi:
+    image: linuxserver/ombi
+    container_name: ombi
+    restart: unless-stopped
+    environment:
+      TZ: Europe/London
+      PUID: 1000
+      PGID: 1000
+    networks:
+      pod-net:
+        ipv4_address: 172.22.0.79
+      #networks:
+      #  pod-net:
+      #    ipv4_address: 172.22.0.79
+    ports:
+      - 3579:3579
+    volumes:
+      - "/mnt/user/appdata/ombi:/config"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.ombi.tls: true
+      traefik.http.routers.ombi.rule: "Host(`ombi.alcock.dev`)"
+      traefik.http.routers.ombi.entrypoints: "websecure"
+      traefik.http.routers.ombi.tls.certresolver: "njalla"
+
+  grafana:
+    image: docker.io/grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - "GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource"
+    networks:
+      pod-net:
+        ipv4_address: 172.22.0.30
+    ports:
+      - 3000:3000
+    volumes:
+      - "/mnt/user/appdata/grafana:/etc/grafana"
+      - grafana-volume:/var/lib/grafana
+
+  prometheus:
+    image: docker.io/prom/prometheus:latest    
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    - --storage.tsdb.path=/prometheus
+    - --web.console.libraries=/usr/share/prometheus/console_libraries
+    - --web.console.templates=/usr/share/prometheus/consoles
+    networks:
+      pod-net:
+        ipv4_address: 172.22.0.91
+    ports:
+      - 9090:9090
+    volumes:
+      - "/mnt/user/appdata/prometheus/etc:/etc"
+
+  node_exporter:
+    image: prom/node-exporter
+    container_name: node_exporter
+    restart: unless-stopped
+    expose:
+      - 9100
+    networks:
+      pod-net:
+        ipv4_address: 172.22.0.81
+
+        #suivi-bourse:
+        #  image: docker.io/paulbrissaud/suivi-bourse-app:latest
+        #  container_name: suivi
+        #  restart: unless-stopped
+        #  environment:
+        #    - SB_SCRAPING_INTERVAL=100
+        #  volumes:
+        #    - "/mnt/user/appdata/suivi:/home/appuser/.config/SuiviBourse"
+        #  ports:
+        #    - 8081:8081
+        #  networks:
+        #    pod-net:
+        #      ipv4_address: 172.22.0.18
+
+  tdarr-controller:
+    image: ghcr.io/haveagitgat/tdarr:latest
+    container_name: tdarr_controller
+    restart: unless-stopped
+    environment:
+      - "NVIDIA_DRIVER_CAPABILITIES=all"
+      - "NVIDIA_VISIBLE_DEVICES=all"
+      - "TZ=Europe/London"
+      - "nodeName=TdarrMaster"
+      - "serverIP=172.22.0.29"
+      - "serverPort=8266"
+      - "webUIPort=8265"
+      - "inContainer=true"
+      - "WEB_UI_PORT=8265"
+      - "SERVER_PORT=8266"
+      - "NODE_PORT=8267"
+      - "PUID=1000"
+      - "PGID=1000"
+      - "UMASK=002"
+    volumes:
+      - "/mnt/user/appdata/tdarr/logs:/app/logs:rw" 
+      - "/mnt/user/appdata/tdarr/server:/app/server:rw" 
+      - "/mnt/user/encode/tdarr:/temp:rw"
+      - "/mnt/user/appdata/tdarr/configs:/app/configs:rw"
+      - "/mnt/user/media:/media:rw"
+    ports:
+      - 8265:8265
+      #- 8266:8266
+      #- 8267:8267
+    devices:
+      - "/dev/dri:/dev/dri:rwm"
+    networks:
+      pod-net:
+        ipv4_address: 172.22.0.29
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  tdarr-node:
+    image: ghcr.io/haveagitgat/tdarr_node
+    container_name: tdarr_node
+    restart: unless-stopped
+    environment:
+      - "NVIDIA_DRIVER_CAPABILITIES=all"
+      - "NVIDIA_VISIBLE_DEVICES=all"
+      - "TZ=Europe/London"
+      - "nodeName=TdarrSlave"
+      - "serverIP=172.22.0.29"
+      - "serverPort=8266"
+      - "inContainer=true"
+      - "WEB_UI_PORT=8265"
+      - "SERVER_PORT=8266"
+      - "NODE_PORT=8267"
+      - "PUID=1000"
+      - "PGID=1000"
+      - "UMASK=002"
+    volumes:
+      - "/mnt/user/media:/media:rw"
+      - "/mnt/user/encode/tdarr:/temp:rw"
+      - "/mnt/user/appdata/tdarr/logs:/app/logs:rw" 
+      - "/mnt/user/appdata/tdarr/configs:/app/configs:rw"
+    #ports:
+      #- 8266:8266
+      #- 8267:8267
+    devices:
+      - "/dev/dri:/dev/dri:rwm"
+    networks:
+      pod-net:
+        ipv4_address: 172.22.0.86
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+volumes:
+    grafana-volume:
+        external: false
+
+networks:
+  pod-net:
+    name: podnet

@@ -1,0 +1,45 @@
+---
+- name: Get auth token
+  openstack.cloud.auth:
+    auth:
+      project_domain_name: Default
+      user_domain_name: Default
+      project_name: admin
+      username: admin
+      password: "{{ secrets.openstack_pass }}"
+      auth_url: http://tiny:5000/v3
+    auth_type: password
+  register: auth
+
+- name: Create auth dict
+  set_fact:
+    os_auth:
+      auth:
+        token: "{{ ansible_facts.auth_token }}"
+        auth_url: http://tiny:5000/v3
+        project_name: admin
+        project_domain_name: Default
+      auth_type: token
+
+- name: Get something fun
+  openstack.cloud.compute_service_info: "{{ os_auth }}"
+
+- name: Get something else fun
+  openstack.cloud.compute_flavor_info:
+    auth: "{{ os_auth.auth }}"
+    auth_type: token
+
+- name: Get something else fun
+  openstack.cloud.config:
+    auth: "{{ os_auth.auth }}"
+    auth_type: token
+
+- name: Get something else fun
+  openstack.cloud.project_info:
+    auth: "{{ os_auth.auth }}"
+    auth_type: token
+
+- name: Get something else fun
+  openstack.cloud.server_info:
+    auth: "{{ os_auth.auth }}"
+    auth_type: token

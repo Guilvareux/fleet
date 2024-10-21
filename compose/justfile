@@ -1,0 +1,14 @@
+default:
+	just --list
+
+update-unraid:
+	scp gluetun.yml unraid:/tmp/gluetun.yml
+	scp traefik.yml unraid:/tmp/traefik.yml
+	scp unraid.yml unraid:/tmp/unraid.yml
+	#ssh unraid "docker-compose -f /tmp/gluetun.yml pull"
+	#ssh unraid "docker-compose -f /tmp/traefik.yml pull"
+	#ssh unraid "docker-compose -f /tmp/unraid.yml pull"
+	#ssh unraid "docker-compose -f /tmp/gluetun.yml up --force-recreate -d"
+	#ssh unraid "docker-compose -f /tmp/traefik.yml up --force-recreate -d"
+	ssh unraid "docker-compose -f /tmp/unraid.yml up --force-recreate -d"
+	#ssh unraid "docker image prune -f"

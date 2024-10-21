@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+
+  searx:
+    image: docker.io/searx/searx:latest
+    container_name: searx
+    restart: "no"
+    environment:
+      - TZ=Europe/London
+    network_mode: container:gluetunvpn
+    volumes:
+      - "/root/pods/searx:/etc/searx"
+
+  libreddit:
+    image: docker.io/spikecodes/libreddit
+    container_name: libreddit
+    environment:
+      TZ: Europe/London
+      LIBREDDIT_DEFAULT_SHOW_NSFW: "on"
+      LIBREDDIT_DEFAULT_THEME: "dark"
+      LIBREDDIT_DEFAULT_USE_HLS: "on"
+    restart: "no"
+    network_mode: container:gluetunvpn
+    command: libreddit --port 8090
+
+networks:
+  default:
+    name: podnet
+    external: true

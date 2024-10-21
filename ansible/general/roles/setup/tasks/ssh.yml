@@ -1,0 +1,6 @@
+- name: Deploy Keys
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user_id }}"
+    state: present
+    key: "{{ item }}"
+  with_file: "{{ keys }}"

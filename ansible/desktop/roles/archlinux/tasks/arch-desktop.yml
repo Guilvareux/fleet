@@ -1,0 +1,18 @@
+---
+- name: Install Arch Desktop
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Update && Upgrade
+      community.general.pacman:
+        update_cache: yes
+        upgrade: yes
+
+    - name: Install packages
+      community.general.pacman:
+        state: latest
+        packages:
+          - i3-gaps
+          - rofi
+          - polybar
+          - picom

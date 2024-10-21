@@ -1,0 +1,69 @@
+#- name: Start Home
+#  community.docker.docker_compose:
+#    docker_host: unix://var/run/podman/podman.sock
+#    project_name: home
+#    definition: "{{ lookup('template', 'home.yml') | from_yaml }}"
+
+#- name: Update
+#  import_tasks: setup.yml
+
+#- name: Create Docker network
+#  community.docker.docker_network:
+#    name: pod-net
+#    ipam_config:
+#      - subnet: 172.25.0.0/16
+
+#- name: Setup Authelia
+#  import_tasks: authelia.yml
+
+- name: Start Home
+  community.docker.docker_compose:
+    project_name: home
+    pull: "{{ update }}"
+    state: present
+    definition: "{{ lookup('template', 'home.yml') | from_yaml }}"
+
+- name: Start Web
+  community.docker.docker_compose:
+    project_name: web
+    pull: "{{ update }}"
+    state: present
+    definition: "{{ lookup('template', 'web.yml') | from_yaml }}"
+
+- name: Start Calico
+  community.docker.docker_compose:
+    project_name: calico
+    pull: "{{ update }}"
+    state: present
+    definition: "{{ lookup('template', 'calico.yml') | from_yaml }}"
+
+- name: Start Media
+  community.docker.docker_compose:
+    project_name: media
+    pull: "{{ update }}"
+    state: present
+    definition: "{{ lookup('template', 'media.yml') | from_yaml }}"
+
+      #- name: Start Media
+      #  community.docker.docker_compose:
+      #    project_name: media
+      #    definition: 
+      #      version: '3.9'
+      #      services:
+      #        nextcloud: "{{ (lookup('template', 'media.yml') | from_yaml).services.nextcloud }}"
+      #      networks:
+      #        pod-net:
+      #          external:
+      #            name: br0darr
+
+              #- name: Start Jellyfin
+              #  community.docker.docker_compose:
+              #    project_name: media
+              #    definition: 
+              #      version: '3.9'
+              #      services:
+              #        jellyfin: "{{ (looikup('template', 'media.yml') | from_yaml).services.jellyfin }}"
+              #      networks: 
+              #        pod-net:
+              #          external:
+              #            name: pod-net

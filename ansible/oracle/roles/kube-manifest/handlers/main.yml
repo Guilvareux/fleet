@@ -1,0 +1,13 @@
+- name: Deploy Kube Networking
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kube_config }}"
+
+- name: Deploy Kube Manifests
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kube_config }}"
+    state: present
+    definition: "{{ lookup('file', '{{ item }}') | from_yaml_all | list}}"
+    loop:
+      - libreddit.yaml
+      - searx.yaml
+      - traefik.yaml

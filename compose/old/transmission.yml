@@ -1,0 +1,46 @@
+docker run \
+  --name "/transmission" \
+  --runtime "runc" \
+  --volume "/mnt/user/encode/torrent:/encode:rw" \
+  --volume "/mnt/user/appdata/transmission:/config:rw" \
+  --volume "/mnt/user/media/downloads:/watch:rw" \
+  --volume "/mnt/user/media/downloads:/downloads:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --hostname "a9fd55491776" \
+  --expose "51413/tcp" \
+  --expose "51413/udp" \
+  --expose "9091/tcp" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "PS1=$(whoami)@$(hostname):$(pwd)\\$ " \
+  --env "HOME=/root" \
+  --env "TERM=xterm" \
+  --env "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0" \
+  --label "build_version"="Linuxserver.io version:- 3.00-r5-ls133 Build-date:- 2022-08-12T14:27:12+02:00" \
+  --label "com.docker.compose.config-hash"="55448b9a4de73f908376ff96226977577c6305f84ca3753139197a37f7780965" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="calico" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansiblepeh9dzyr/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansiblepeh9dzyr" \
+  --label "com.docker.compose.service"="transmission" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "maintainer"="aptalca" \
+  --label "org.opencontainers.image.authors"="linuxserver.io" \
+  --label "org.opencontainers.image.created"="2022-08-12T14:27:12+02:00" \
+  --label "org.opencontainers.image.description"="[Transmission](https://www.transmissionbt.com/) is designed for easy, powerful use. Transmission has the features you want from a BitTorrent client: encryption, a web interface, peer exchange, magnet links, DHT, µTP, UPnP and NAT-PMP port forwarding, webseed support, watch directories, tracker editing, global and per-torrent speed limits, and more." \
+  --label "org.opencontainers.image.documentation"="https://docs.linuxserver.io/images/docker-transmission" \
+  --label "org.opencontainers.image.licenses"="GPL-3.0-only" \
+  --label "org.opencontainers.image.ref.name"="06644e6dd913177d39496a9336e54c788e9a0d0c" \
+  --label "org.opencontainers.image.revision"="06644e6dd913177d39496a9336e54c788e9a0d0c" \
+  --label "org.opencontainers.image.source"="https://github.com/linuxserver/docker-transmission" \
+  --label "org.opencontainers.image.title"="Transmission" \
+  --label "org.opencontainers.image.url"="https://github.com/linuxserver/docker-transmission/packages" \
+  --label "org.opencontainers.image.vendor"="linuxserver.io" \
+  --label "org.opencontainers.image.version"="3.00-r5-ls133" \
+  --detach \
+  --entrypoint "/init" \
+  "linuxserver/transmission" \
+  

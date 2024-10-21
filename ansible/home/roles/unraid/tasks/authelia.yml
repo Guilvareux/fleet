@@ -1,0 +1,15 @@
+- name: Create Authelia userdb
+  ansible.builtin.file:
+    dest: "{{ config_path }}/authelia"
+    state: directory
+
+- name: Copy Authelia file
+  ansible.builtin.template:
+    force: yes
+    src: authelia-conf.yml
+    dest: "{{ config_path }}/authelia/configuration.yml"
+
+- name: Create Authelia userdb
+  ansible.builtin.file:
+    path: "{{ config_path }}/authelia/users_db.yml"
+    state: touch    

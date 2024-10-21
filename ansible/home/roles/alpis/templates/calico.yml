@@ -1,0 +1,105 @@
+version: '3.9'
+services:
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    restart: unless-stopped
+    network_mode: container:gluetunvpn
+    volumes:
+      - /dev/rtc
+      - "{{ config_path }}/sonarr:/config"
+      - "{{ tv_path }}:/tv"
+      - "{{ download_path }}:/downloads"
+
+  radarr:
+    image: linuxserver/radarr:develop
+    container_name: radarr
+    restart: unless-stopped
+    network_mode: container:gluetunvpn
+    volumes:
+      - /dev/rtc
+      - "{{ config_path }}/radarr:/config"
+      - "{{ film_path }}:/movies"
+      - "{{ download_path }}:/downloads"
+
+  prowlarr:
+    image: ghcr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr
+    restart: unless-stopped
+    network_mode: container:gluetunvpn
+    environment:
+      TZ: Europe/London
+    volumes:
+      - "{{ config_path }}/prowlarr:/config"
+    
+  readarr:
+    image: ghcr.io/linuxserver/readarr:develop
+    container_name: readarr
+    restart: unless-stopped
+    network_mode: container:gluetunvpn
+    environment:
+      TZ: Europe/London
+    volumes:
+      - "{{ config_path }}/readarr:/config"
+      - "{{ book_path }}:/books"
+      - "{{ download_path }}:/downloads"
+
+  bazarr:
+    image: ghcr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    restart: unless-stopped
+    network_mode: container:gluetunvpn
+    environment:
+      TZ: Europe/London
+    volumes:
+      - "{{ config_path }}/bazarr:/config"
+      - "{{ tv_path }}:/tv"
+      - "{{ film_path }}:/movies"
+      - "{{ download_path }}:/downloads"
+
+  transmission:
+    image: linuxserver/transmission
+    container_name: transmission
+    restart: unless-stopped
+    network_mode: container:gluetunvpn
+    volumes:
+      - "{{ config_path }}/transmission:/config"
+      - "{{ download_path }}:/downloads"
+      - "{{ download_path }}:/watch"
+      - "{{ encode_path }}/torrent:/encode"
+
+  nzbget:
+    image: linuxserver/nzbget
+    container_name: nzbget
+    restart: unless-stopped
+    network_mode: container:gluetunvpn
+    volumes:
+      - "{{ config_path }}/nzbget:/config"
+      - "{{ download_path }}:/downloads"
+      - "{{ encode_path }}/nzbget:/encode"
+
+  ombi:
+    image: linuxserver/ombi
+    container_name: ombi
+    restart: unless-stopped
+    networks:
+      podnet:
+        ipv4_address: 172.22.0.79
+      #networks:
+      #  podnet:
+      #    ipv4_address: 172.22.0.79
+    ports:
+      - 3579:3579
+    volumes:
+      - "{{ config_path }}/ombi:/config"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.ombi.tls: true
+      traefik.http.routers.ombi.rule: "Host(`ombi.{{ domain }}`)"
+      traefik.http.routers.ombi.entrypoints: "{{ traefik.securename }}"
+      traefik.http.routers.ombi.tls.certresolver: "{{ traefik.resolver }}"
+
+networks:
+  podnet:
+    external:
+      name: podnet

@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traefik
+  namespace: "{{ oracle_namespace }}"
+  labels:
+    app: traefik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traefik
+  template:
+    metadata:
+      labels:
+        app: traefik
+    spec:
+      containers:
+        - name: traefik
+          image: traefik:v2.5
+          args:
+            - --global.sendanonymoususage=false
+            - --accesslog=true
+            - --ping=true
+            - --entrypoints.web.address=80
+            - --entrypoints.metrics.address=9100/tcp
+            - --entrypoints.traefik.address=9000/tcp
+            - --entrypoints.websecure.address=443
+            - --entrypoints.websecure.http.tls=true
+            - --entrypoints.websecure.http.tls.certResolver=njalla
+            - --entrypoints.websecure.http.tls.domains[0].main=alcock.dev
+            - --entrypoints.websecure.http.tls.domains[0].sans=ludwig.alcock.dev,libreddit.alcock.dev
+            - --certificatesresolvers.njalla.acme.email=paul@alcock.dev
+            - --certificatesresolvers.njalla.acme.storage=/etc/traefik/acme.json
+            - --certificatesresolvers.njalla.acme.entryPoint=websecure
+            - --certificatesresolvers.njalla.acme.dnsChallenge.provider=njalla
+            - --certificatesresolvers.njalla.acme.dnsChallenge.delayBeforeCheck=30
+            - --certificatesresolvers.njalla.acme.storage=/etc/traefik/acme.json
+            - --providers.kubernetescrd=true
+            - "--providers.kubernetescrd.endpoint=http://{{ kube_api }}:6443"
+            - "--providers.kubernetescrd.token={{ token }}"
+            - --providers.kubernetescrd.namespaces=oracle-default
+            - --providers.kubernetescrd.allowExternalNameServices=true
+            - --providers.kubernetesingress=true
+            - "--providers.kubernetesingress.token={{ token }}"
+            - --providers.kubernetesingress.namespaces=oracle-default
+            - --providers.kubernetesingress.allowExternalNameServices=true
+          environment:
+            - name: NJALLA_TOKEN
+              value: "{{ secrets.njalla_token }}"
+          ports:
+            - name: web
+              containerPort: 80
+            - name: admin
+              containerPort: 8080
+            - name: websecure
+              containerPort: 443
+          volumeMounts:
+            - name: traefik-pv
+              mountPath: /etc/traefik
+      volumes:
+        - name: traefik-pv
+          persistentVolumeClaim:
+            claimName: traefik-pvc
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - chmod -Rv 600 /etc/traefik/*
+        image: busybox:1.31.1
+        name: volume-permissions
+        volumeMounts:
+        - mountPath: /etc/traefik
+          name: traefik-pv
+          existingClaim: traefik-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik
+  namespace: "{{ oracle_namespace }}"
+spec:
+  type: ClusterIP
+  externalIPs:
+    - 10.0.20.223
+  selector:
+    app: traefik
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+      targetPort: 80
+    - protocol: TCP
+      port: 443
+      name: websecure
+      targetPort: 443
+    - protocol: TCP
+      port: 8080
+      name: admin
+      targetPort: 8081

@@ -1,0 +1,50 @@
+docker run \
+  --name "/rss-bridge" \
+  --runtime "runc" \
+  --volume "/mnt/user/appdata/rss-bridge/whitelist.txt:/app/whitelist.txt:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --publish "0.0.0.0:85:80/tcp" \
+  --network "podnet" \
+  --network-alias "rss-bridge" \
+  --network-alias "8b4b40b0c81a" \
+  --hostname "8b4b40b0c81a" \
+  --expose "80/tcp" \
+  --expose "9000/tcp" \
+  --env "TZ=Europe/London" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "PHPIZE_DEPS=autoconf \t\tdpkg-dev \t\tfile \t\tg++ \t\tgcc \t\tlibc-dev \t\tmake \t\tpkg-config \t\tre2c" \
+  --env "PHP_INI_DIR=/usr/local/etc/php" \
+  --env "PHP_CFLAGS=-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64" \
+  --env "PHP_CPPFLAGS=-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64" \
+  --env "PHP_LDFLAGS=-Wl,-O1 -pie" \
+  --env "GPG_KEYS=42670A7FE4D0441C8E4632349E4FDC074A4EF02D 5A52880781F755608BF815FC910DEB46F53EA312" \
+  --env "PHP_VERSION=7.4.29" \
+  --env "PHP_URL=https://www.php.net/distributions/php-7.4.29.tar.xz" \
+  --env "PHP_ASC_URL=https://www.php.net/distributions/php-7.4.29.tar.xz.asc" \
+  --env "PHP_SHA256=7d0f07869f33311ff3fe1138dc0d6c0d673c37fcb737eaed2c6c10a949f1aed6" \
+  --label "com.docker.compose.config-hash"="d611c29c4209182d600a0a5f0e763839054ac78c39d08b1647dd4a7a63605527" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="web" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansibleggj53p9b/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansibleggj53p9b" \
+  --label "com.docker.compose.service"="rss-bridge" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "description"="RSS-Bridge is a PHP project capable of generating RSS and Atom feeds for websites that don't have one." \
+  --label "org.opencontainers.image.created"="2022-08-12T12:51:59.157Z" \
+  --label "org.opencontainers.image.description"="The RSS feed for websites missing it" \
+  --label "org.opencontainers.image.licenses"="Unlicense" \
+  --label "org.opencontainers.image.revision"="e99cbf21b2e70f2e572fc3a4a0a341bb82119838" \
+  --label "org.opencontainers.image.source"="https://github.com/RSS-Bridge/rss-bridge" \
+  --label "org.opencontainers.image.title"="rss-bridge" \
+  --label "org.opencontainers.image.url"="https://github.com/RSS-Bridge/rss-bridge" \
+  --label "org.opencontainers.image.version"="latest" \
+  --label "repository"="https://github.com/RSS-Bridge/rss-bridge" \
+  --label "website"="https://github.com/RSS-Bridge/rss-bridge" \
+  --detach \
+  --entrypoint "/app/docker-entrypoint.sh" \
+  "docker.io/rssbridge/rss-bridge" \
+  

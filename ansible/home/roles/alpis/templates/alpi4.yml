@@ -1,0 +1,30 @@
+version: '3.9'
+services:
+
+  homeassistant:
+    image: docker.io/homeassistant/home-assistant:latest
+    container_name: homeassistant
+    restart: unless-stopped
+    network_mode: host
+    privileged: true
+    environment:
+      - PUID=99
+      - PGID=100
+      - UMASK=022
+    volumes:
+      - "{{ config_path }}/homeassistant:/config"
+
+  redisgraph:
+    image: docker.io/redislabs/redisgraph:edge-arm64v8
+    container_name: redisgraph
+    networks:
+      podnet:
+        ipv4_address: "172.22.0.11"
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+
+networks:
+  podnet:
+    external:
+      name: podnet

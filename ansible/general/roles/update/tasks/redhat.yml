@@ -1,0 +1,15 @@
+- name: Update
+  async: 60
+  poll: 0
+  ansible.builtin.dnf:
+    update_cache: yes
+    state: latest
+    pkg:
+      - apt-transport-https
+      - curl
+      - python3
+      - python3-pip
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - ipvsadm

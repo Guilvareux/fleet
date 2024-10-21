@@ -1,0 +1,25 @@
+version: '3.1'
+services:
+  neo4j:
+    image: docker.io/neo4j:4.4.7-community
+    container_name: neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/test
+    ports:
+      - 7474:7474
+      - 7473:7473
+      - 7687:7687
+    volumes:
+      - neo4j-volume-data:/data
+      - neo4j-volume-logs:/logs
+      - neo4j-volume-import:/var/lib/neo4j/import
+      - neo4j-volume-plugins:/plugins
+volumes:
+  neo4j-volume-data:
+    external: false
+  neo4j-volume-logs:
+    external: false
+  neo4j-volume-import:
+    external: false
+  neo4j-volume-plugins:
+    external: false

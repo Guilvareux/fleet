@@ -1,0 +1,35 @@
+---
+- name: Install Arch Dotfiles
+  hosts: localhost
+  become: true
+  vars:
+    file_path: ""
+  tasks:
+    - name: Install Neovim
+      pacman:
+        name: neovim
+        state: present
+    - name: Install Neovim
+      pacman:
+        name: fzf
+        state: present
+    - name: Install Dockerfile Lang Server
+      pacman:
+        name: dockerfile-language-server
+        state: present
+    - name: Install rust_analyzer
+      pacman:
+        name: rust_analyzer
+        state: present
+    - name: Install gopls
+      pacman:
+        name: gopls
+        state: present
+    - name: Install bash-language-server
+      pacman:
+        name: bash-language-server
+        state: present
+    - name: Install pyright
+      pacman:
+        name: pyright
+        state: present

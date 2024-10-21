@@ -1,0 +1,32 @@
+docker run \
+  --name "/prometheus" \
+  --runtime "runc" \
+  --volume "/mnt/user/appdata/prometheus:/etc/prometheus:rw" \
+  --mount type=volume,source=d7704dba3a8dab6a8ce0175423bf28c412a9a401547c98e74e345597d68ac290,destination=/prometheus \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --network "tmp_default" \
+  --network-alias "prometheus" \
+  --network-alias "prometheus" \
+  --network-alias "d28ace7afec0" \
+  --hostname "d28ace7afec0" \
+  --expose "9090/tcp" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --label "com.docker.compose.config-hash"="fc0992907a1be3c1e9d0006b2d1cc2e88d102b9f002cfc1b17a9715e2ee0db07" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.depends_on"="" \
+  --label "com.docker.compose.image"="sha256:a5bac665ffa2c7c5a6fa96e9e9e00b51af36a5ca78cdbd682d8a90b6107aec84" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="tmp" \
+  --label "com.docker.compose.project.config_files"="/tmp/unraid.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp" \
+  --label "com.docker.compose.service"="prometheus" \
+  --label "com.docker.compose.version"="2.1.1" \
+  --label "maintainer"="The Prometheus Authors <prometheus-developers@googlegroups.com>" \
+  --attach stdout \
+  --attach stderr \
+  --entrypoint "/bin/prometheus" \
+  "prom/prometheus:latest" \
+  "--config.file=/etc/prometheus/prometheus.yml" "--storage.tsdb.path=/prometheus" "--web.console.libraries=/usr/share/prometheus/console_libraries" "--web.console.templates=/usr/share/prometheus/consoles" 

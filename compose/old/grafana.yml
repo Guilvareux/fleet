@@ -1,0 +1,37 @@
+docker run \
+  --name "/grafana" \
+  --runtime "runc" \
+  --mount type=bind,source=/mnt/user/appdata/grafana,destination=/etc/grafana \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --publish "0.0.0.0:3000:3000/tcp" \
+  --network "tmp_default" \
+  --network-alias "grafana" \
+  --network-alias "grafana" \
+  --network-alias "7ab28b4d0a65" \
+  --hostname "7ab28b4d0a65" \
+  --expose "3000/tcp" \
+  --env "PATH=/usr/share/grafana/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "GF_PATHS_CONFIG=/etc/grafana/grafana.ini" \
+  --env "GF_PATHS_DATA=/var/lib/grafana" \
+  --env "GF_PATHS_HOME=/usr/share/grafana" \
+  --env "GF_PATHS_LOGS=/var/log/grafana" \
+  --env "GF_PATHS_PLUGINS=/var/lib/grafana/plugins" \
+  --env "GF_PATHS_PROVISIONING=/etc/grafana/provisioning" \
+  --label "com.docker.compose.config-hash"="a96aaf59ccd1da1722d51bf9c1c850e055e7b75eb6cfb4438f85dc9d5810b631" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.depends_on"="prometheus" \
+  --label "com.docker.compose.image"="sha256:c876b1dbac2121d89ceb6d00196808b2e32afe1f7d7c05b86a7d0bcc180d813c" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="tmp" \
+  --label "com.docker.compose.project.config_files"="/tmp/unraid.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp" \
+  --label "com.docker.compose.service"="grafana" \
+  --label "com.docker.compose.version"="2.1.1" \
+  --attach stdout \
+  --attach stderr \
+  --entrypoint "/run.sh" \
+  "grafana/grafana:latest" \
+  

@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: "{{ service_name }}"
+  namespace: "{{ oracle_namespace }}"
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`"{{ domain_name }}"`) || PathPrefix(`/"{{ service_name }}"`)
+      kind: Rule
+      services:
+        - name: "{{ service_name }}"
+          kind: Service
+          namespace: "{{ oracle_namespace }}"
+          passHostHeader: true
+          port: "{{ service_port }}"

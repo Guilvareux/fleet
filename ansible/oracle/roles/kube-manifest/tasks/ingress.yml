@@ -1,0 +1,6 @@
+- name: Apply Kube Manifests
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kube_config }}"
+    state: present
+    definition: "{{ lookup('template', '{{ item }}') | from_yaml_all | list}}"
+  loop: "{{ manifests.services }}"

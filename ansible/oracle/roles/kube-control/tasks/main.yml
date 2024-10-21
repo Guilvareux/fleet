@@ -1,0 +1,8 @@
+- name: Join (Control Plane nodes)
+  ansible.builtin.shell: |
+    /usr/bin/kubeadm \
+    join {{ control_endpoint }}:{{ control_endpoint_port }} \
+    --control-plane \
+    --token {{ token }} \
+    --certificate-key {{ cert_key }} \
+    --discovery-token-unsafe-skip-ca-verification 

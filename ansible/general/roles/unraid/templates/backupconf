@@ -1,0 +1,66 @@
+#!/bin/bash
+
+OUTPUT="/mnt/user/nextcloud/paul/files"
+APPDATA="/mnt/user/appdata"
+PCAL="https://files.alcock.dev/remote.php/dav/calendars/paul/personal/?export"
+file=$(cat ./appfiles.txt)
+files=""
+array=()
+
+DBPASS="4d7b8e262ea9c8c9d863"
+
+function backupdatabase {
+    docker exec mariadb sh \
+	-c 'exec mysqldump --all-databases -u root -p $DBPASS' | xz -9 \ 
+	--stdout > /mnt/user/nextcloud/paul/files/nextcloud-backup-latest.sql.xz
+}
+
+function addtofiles {
+    localarray=("${@}")
+    for item in ${@}; do
+	array+="$item\n"
+    done
+}
+
+function findfile {
+    for line in ${@}; do
+	item=$(find $line)
+	for one in $item; do
+	    addtofiles $one
+	done
+    done
+}
+
+function backup_configs {
+
+    # Archive and Compress all config files
+    tar -cJf confs.tar.xz -T ./appfiles.txt
+
+}
+
+
+
+
+#for line in $file; do
+#    if [[ ${line:0:1} == "/" ]]; then
+#	findfile "$line"
+#    else
+#	findfile "$APPDATA/$line"
+#    fi
+#done
+
+#for line in $file; do
+#    printf $line\n
+#    if [[ ${line:0:1} == "/" ]]; then
+#	files+="$line\n"
+#    else
+#	files+="$APPDATA/$line\n"
+#    fi
+#done
+
+#printf $files | zip -9 "${OUTPUT}/confarchive" -@
+#printf ${array[@]}
+
+#zip confs.zip -@ $array
+#gzip -k --best -@ $array
+#xz --extreme confs.zip

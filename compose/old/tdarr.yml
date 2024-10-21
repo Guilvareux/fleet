@@ -1,0 +1,67 @@
+docker run \
+  --name "/tdarr" \
+  --runtime "runc" \
+  --volume "/mnt/user/appdata/tdarr/logs:/app/logs:rw" \
+  --volume "/mnt/user/appdata/tdarr/server:/app/server:rw" \
+  --volume "/mnt/user/encode/tdarr:/temp:rw" \
+  --volume "/mnt/user/appdata/tdarr/configs:/app/configs:rw" \
+  --volume "/mnt/user/media:/media:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="5" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --device "/dev/dri":"/dev/dri":rwm \
+  --network "podnet" \
+  --network-alias "178a85fa4744" \
+  --network-alias "tdarr" \
+  --hostname "178a85fa4744" \
+  --expose "8265/tcp" \
+  --expose "8266/tcp" \
+  --expose "8267/tcp" \
+  --env "NVIDIA_DRIVER_CAPABILITIES=all" \
+  --env "NVIDIA_VISIBLE_DEVICES=all" \
+  --env "TZ=Europe/London" \
+  --env "nodeID=TdarrMaster" \
+  --env "serverIP=172.22.0.29" \
+  --env "serverPort=8266" \
+  --env "webUIPort=8265" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "HOME=/home/Tdarr" \
+  --env "LANGUAGE=en_US.UTF-8" \
+  --env "LANG=en_US.UTF-8" \
+  --env "TERM=xterm" \
+  --env "LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri" \
+  --env "LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu" \
+  --env "HANDBRAKE=1.5.1" \
+  --env "WEB_UI_PORT=8265" \
+  --env "SERVER_PORT=8266" \
+  --env "NODE_PORT=8267" \
+  --env "PUID=1000" \
+  --env "PGID=1000" \
+  --env "UMASK=002" \
+  --label "build_version"="Linuxserver.io version:- fa335518-ls75 Build-date:- 2022-05-17T07:05:13+02:00" \
+  --label "com.docker.compose.config-hash"="6cb74fa0e94f4ce2caa04d7d102704a1409ff11e427fd34e4ce388489f794673" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="tdarr" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansibleayxdk2hr/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansibleayxdk2hr" \
+  --label "com.docker.compose.service"="tdarr" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "maintainer"="TheLamer" \
+  --label "org.opencontainers.image.authors"="linuxserver.io" \
+  --label "org.opencontainers.image.created"="2022-05-17T07:05:13+02:00" \
+  --label "org.opencontainers.image.description"="baseimage-ubuntu image by linuxserver.io" \
+  --label "org.opencontainers.image.documentation"="https://docs.linuxserver.io/images/docker-baseimage-ubuntu" \
+  --label "org.opencontainers.image.licenses"="GPL-3.0-only" \
+  --label "org.opencontainers.image.ref.name"="024f16e2eced4dd05a8400fbeba4bfd6fc1005b1" \
+  --label "org.opencontainers.image.revision"="024f16e2eced4dd05a8400fbeba4bfd6fc1005b1" \
+  --label "org.opencontainers.image.source"="https://github.com/linuxserver/docker-baseimage-ubuntu" \
+  --label "org.opencontainers.image.title"="Baseimage-ubuntu" \
+  --label "org.opencontainers.image.url"="https://github.com/linuxserver/docker-baseimage-ubuntu/packages" \
+  --label "org.opencontainers.image.vendor"="linuxserver.io" \
+  --label "org.opencontainers.image.version"="fa335518-ls75" \
+  --detach \
+  --entrypoint "/init" \
+  "docker.io/haveagitgat/tdarr:latest" \
+  

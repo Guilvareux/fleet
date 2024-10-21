@@ -1,0 +1,59 @@
+version: '3.1'
+services:
+  nextcloud:
+    image: docker.io/linuxserver/nextcloud
+    container_name: nextcloud
+    environment:
+      - TZ=Europe/London
+    restart: unless-stopped
+    networks:
+      - pod-net
+    ports:
+      - 444:444
+      - 8011:80
+    volumes:
+      - "{{ cloud_config }}/nextcloud:/config"
+      - "{{ cloud_config }}:/data"
+    labels:
+      traefik.http.routers.nextcloud.rule: "Host(`files.{{ domain }}`)"
+      traefik.http.routers.nextcloud.entrypoint: https
+      traefik.http.routers.nextcloud.tls.certresolver: resolver
+      traefik.http.services.nextcloud.loadbalancer.server.port: 80
+      traefik.http.routers.nextcloud.tls: true
+      traefik.enable: true
+
+  mariadb:
+    image: docker.io/linuxserver/mariadb
+    container_name: mariadb
+    environment:
+      - TZ=Europe/London
+    restart: unless-stopped
+    networks:
+      - pod-net
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 3306:3306
+    volumes:
+      - "{{ cloud_config }}/mariadb:/config"
+
+  neo4j:
+    image: docker.io/docker.io/neo4j:4.4.7-community
+    container_name: neo4j
+    environment:
+      - TZ=Europe/London
+      - NEO4J_AUTH=neo4j/test
+    ports:
+      - 7474:7474
+      - 7473:7473
+      - 7687:7687
+    volumes:
+      - "{{ cloud-config }}/neo4j/data:/data"
+      - "{{ cloud-config }}/neo4j/logs:/logs"
+      - "{{ cloud-config }}/neo4j/plugins:/plugins"
+      - "{{ cloud-config }}/neo4j/import:/var/lib/neo4j/import"
+
+networks:
+  pod-net:
+    external:
+      name: pod-net

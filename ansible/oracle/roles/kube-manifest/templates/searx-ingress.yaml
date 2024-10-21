@@ -1,0 +1,23 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: searxng-ingress
+  namespace: "{{ oracle_namespace }}"
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`ludwig.alcock.dev`) && (PathPrefix(`/searx`) || PathPrefix(`/search`) || PathPrefix(`/searxng`))
+      kind: Rule
+      services:
+        - name: searxng-service
+          kind: Service
+          namespace: "{{ oracle_namespace }}"
+          passHostHeader: true
+          port: 8080
+          tls:
+            insecureSkipVerify: true
+          headers:
+            browserXssFilter: false
+            forceSTSHeader: false

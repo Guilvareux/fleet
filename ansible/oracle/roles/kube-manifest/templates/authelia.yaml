@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authelia
+  namespace: "{{ oracle_namespace }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authelia
+  template:
+    metadata:
+      labels:
+        app: authelia
+    spec:
+      containers:
+      - name: authelia
+        image: docker.io/authelia/authelia
+        ports:
+        - containerPort: 9091
+        volumeMounts:
+        - name: authelia-vol
+          mountPath: /config
+      volumes:
+      - name: authelia-vol
+        existingClaim: authelia-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authelia-svc
+  namespace: "{{ oracle_namespace }}"
+spec:
+  ports:
+  - port: 9091
+    targetPort: 8000
+  selector:
+    app: authelia

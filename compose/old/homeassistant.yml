@@ -1,0 +1,48 @@
+docker run \
+  --name "/homeassistant" \
+  --privileged \
+  --runtime "runc" \
+  --volume "/mnt/user/appdata/homeassistant:/config:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --network "host" \
+  --hostname "Tower" \
+  --expose "8123/tcp" \
+  --env "PUID=99" \
+  --env "PGID=100" \
+  --env "UMASK=022" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "PS1=$(whoami)@$(hostname):$(pwd)\\$ " \
+  --env "HOME=/config" \
+  --env "TERM=xterm" \
+  --env "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0" \
+  --env "PIPFLAGS=--no-cache-dir --use-deprecated=legacy-resolver --find-links https://wheel-index.linuxserver.io/alpine-3.16/ --find-links https://wheel-index.linuxserver.io/homeassistant-3.16/" \
+  --env "PYTHONPATH=:/pip-packages" \
+  --label "build_version"="Linuxserver.io version:- 2022.8.4-ls89 Build-date:- 2022-08-12T14:59:47-05:00" \
+  --label "com.docker.compose.config-hash"="0f62d47f1ccebacc19d2945ed401f09fc8442e2f25e5a6e595edb19fa449f581" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="home" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansible2gjkqe9c/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansible2gjkqe9c" \
+  --label "com.docker.compose.service"="homeassistant" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "maintainer"="saarg, roxedus" \
+  --label "org.opencontainers.image.authors"="linuxserver.io" \
+  --label "org.opencontainers.image.created"="2022-08-12T14:59:47-05:00" \
+  --label "org.opencontainers.image.description"="[Home Assistant Core](https://www.home-assistant.io/) - Open source home automation that puts local control and privacy first. Powered by a worldwide community of tinkerers and DIY enthusiasts. Perfect to run on a Raspberry Pi or a local server.   " \
+  --label "org.opencontainers.image.documentation"="https://docs.linuxserver.io/images/docker-homeassistant" \
+  --label "org.opencontainers.image.licenses"="GPL-3.0-only" \
+  --label "org.opencontainers.image.ref.name"="73c9449cfb2ecaa28302e8d3d988fe1fb48d34f7" \
+  --label "org.opencontainers.image.revision"="73c9449cfb2ecaa28302e8d3d988fe1fb48d34f7" \
+  --label "org.opencontainers.image.source"="https://github.com/linuxserver/docker-homeassistant" \
+  --label "org.opencontainers.image.title"="Homeassistant" \
+  --label "org.opencontainers.image.url"="https://github.com/linuxserver/docker-homeassistant/packages" \
+  --label "org.opencontainers.image.vendor"="linuxserver.io" \
+  --label "org.opencontainers.image.version"="2022.8.4-ls89" \
+  --detach \
+  --entrypoint "/init" \
+  "lscr.io/linuxserver/homeassistant:latest" \
+  

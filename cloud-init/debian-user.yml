@@ -1,0 +1,23 @@
+#cloud-config
+
+#groups:
+#  - admingroup: [root, sys]
+#  - users
+
+#packages:
+#  - python3
+#  - python3-pip
+#  - ansible
+#  -  
+
+users:
+  - name: paul
+    gecos: Paul
+    groups: paul
+    primary_group: paul
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ssh-ed25519 key person@machine
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    groups: sudo
+    shell: /bin/bash

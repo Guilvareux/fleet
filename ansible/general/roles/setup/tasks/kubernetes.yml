@@ -1,0 +1,34 @@
+- name: Get Kubernetes Signing Key
+  become: yes
+  async: 60
+  poll: 0
+  ansible.builtin.command:
+    cmd: curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    creates: /usr/share/keyrings/kubernetes-archive-keyring.gpg
+
+- name: Add Kubernetes Repository
+  async: 60
+  poll: 0
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main"
+    state: present
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Install K8s and Container Packages
+  async: 60
+  poll: 0
+  ansible.builtin.apt:
+    update_cache: yes
+    state: latest
+    pkg:
+      - containerd.io
+      - kubeadm
+      - kubelet
+      - kubectl 
+      - flannel
+
+- name: Install Python3 client for Kubernetes
+  ansible.builtin.pip:
+    name: "{{ item }}"
+  loop:
+    - kubernetes

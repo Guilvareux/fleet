@@ -1,0 +1,50 @@
+version: '3.9'
+services:
+  gluetunvpn:
+    image: docker.io/qmcgaw/gluetun
+    container_name: gluetunvpn
+    cap_add: 
+      - NET_ADMIN
+    privileged: true
+    environment:
+      - TZ=Europe/London
+      - FIREWALL=on
+      - LOG_LEVEL=info
+      - VPN_SERVICE_PROVIDER=custom
+      - VPN_TYPE=wireguard
+      - VPN_ENDPOINT_IP=89.238.150.170
+      - VPN_ENDPOINT_PORT=51820
+      - DNS_ADDRESS=10.2.0.1
+      - WIREGUARD_PRIVATE_KEY=KCu8JpAWxRvZthwzwtRcJp4nshHad7VipO3iFy01q24=
+      - WIREGUARD_PUBLIC_KEY=o0F4H+q6+dxKknCQES2+8Upz/VFTivxqqDC3UnEhNFo=
+      - WIREGUARD_ADDRESSES=10.2.0.2/32
+#      - HTTPPROXY=on
+#      - HTTPPROXY_PORT=8888
+#      - HTTPPROXY_USER=paul
+    restart: "no"
+    ports:
+      - 7878:7878
+      - 6767:6767
+      - 6789:6789
+      - 8989:8989
+      - 8010:8010
+      - 8080:8080
+      - 8090:8090
+      - 8085:8085
+      - 8086:8086
+      - 8787:8787
+      - 9091:9091
+      - 9696:9696
+      - 51413:51413
+    networks:
+      podnet:
+        ipv4_address: 172.22.0.5
+    volumes:
+      - "/home/pods/gluetun:/gluetun"
+      - /var/run/podman/podman.sock:/var/run/docker.sock
+
+networks:
+  podnet:
+    name: podnet
+    driver: bridge
+    external: true

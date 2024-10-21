@@ -1,0 +1,43 @@
+docker run \
+  --name "/prowlarr" \
+  --runtime "runc" \
+  --volume "/mnt/user/appdata/prowlarr:/config:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --hostname "a9fd55491776" \
+  --expose "9696/tcp" \
+  --env "TZ=Europe/London" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "PS1=$(whoami)@$(hostname):$(pwd)\\$ " \
+  --env "HOME=/root" \
+  --env "TERM=xterm" \
+  --env "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0" \
+  --env "XDG_CONFIG_HOME=/config/xdg" \
+  --label "build_version"="Linuxserver.io version:- 0.4.3.1921-ls63 Build-date:- 2022-08-13T04:19:49+02:00" \
+  --label "com.docker.compose.config-hash"="324017fea7caa471e379686f024bc358fcd5a3358ad35efca56b013bf1a9c6aa" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="calico" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansiblefn26yy7i/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansiblefn26yy7i" \
+  --label "com.docker.compose.service"="prowlarr" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "maintainer"="Roxedus,thespad" \
+  --label "org.opencontainers.image.authors"="linuxserver.io" \
+  --label "org.opencontainers.image.created"="2022-08-13T04:19:49+02:00" \
+  --label "org.opencontainers.image.description"="[Prowlarr](https://github.com/Prowlarr/Prowlarr) is a indexer manager/proxy built on the popular arr .net/reactjs base stack to integrate with your various PVR apps. Prowlarr supports both Torrent Trackers and Usenet Indexers. It integrates seamlessly with Sonarr, Radarr, Lidarr, and Readarr offering complete management of your indexers with no per app Indexer setup required (we do it all).  " \
+  --label "org.opencontainers.image.documentation"="https://docs.linuxserver.io/images/docker-prowlarr" \
+  --label "org.opencontainers.image.licenses"="GPL-3.0-only" \
+  --label "org.opencontainers.image.ref.name"="93d17384c2495e53a50250da3b6066eb7739d0c9" \
+  --label "org.opencontainers.image.revision"="93d17384c2495e53a50250da3b6066eb7739d0c9" \
+  --label "org.opencontainers.image.source"="https://github.com/linuxserver/docker-prowlarr" \
+  --label "org.opencontainers.image.title"="Prowlarr" \
+  --label "org.opencontainers.image.url"="https://github.com/linuxserver/docker-prowlarr/packages" \
+  --label "org.opencontainers.image.vendor"="linuxserver.io" \
+  --label "org.opencontainers.image.version"="0.4.3.1921-ls63" \
+  --detach \
+  --entrypoint "/init" \
+  "ghcr.io/linuxserver/prowlarr:develop" \
+  

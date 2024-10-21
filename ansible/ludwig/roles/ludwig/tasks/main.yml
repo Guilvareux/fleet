@@ -1,0 +1,12 @@
+- name: Create Docker network
+  containers.podman.podman_network:
+    name: "{{ br_name }}"
+    subnet: 172.23.0.0/16
+  become: true
+
+- name: Start with docker-compose
+  community.docker.docker_compose:
+    docker_host: unix://var/run/podman/podman.sock
+    project_name: ludwig-compose
+    pull: yes
+    definition: "{{ lookup('template', 'compose.yml') | from_yaml }}"

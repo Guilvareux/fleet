@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  kube-scheduler:
+    image: docker/desktop-kubernetes-scheduler:v1.23.5
+    container_name: kube-scheduler
+    restart: "no"
+    network_mode: host
+    environment:
+      TZ: Europe/London
+  kube-apiserver:
+    image: docker/desktop-kubernetes-apiserver:v1.23.5
+    container_name: kube-apiserver
+    restart: "no"
+    network_mode: host
+    environment:
+      TZ: Europe/London
+  kube-etcd:
+    image: docker/desktop-kubernetes-etcd:3.5.0-0
+    container_name: kube-etcd
+    restart: "no"
+    network_mode: host
+    environment:
+      TZ: Europe/London
+  kube-controller-manager:
+    image: docker/desktop-kubernetes-controller-manager:v1.23.5
+    container_name: kube-controller-manager
+    restart: "no"
+    network_mode: host
+    environment:
+      TZ: Europe/London

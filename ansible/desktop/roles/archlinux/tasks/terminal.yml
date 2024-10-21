@@ -1,0 +1,41 @@
+---
+- name: Install Terminal
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Install starship
+      pacman:
+        name: starship
+        state: present
+    - name: Install tmux
+      pacman:
+        name: tmux
+        state: present
+    - name: Install neofetch
+      pacman:
+        name: neofetch
+        state: present
+    - name: Install htop
+      pacman:
+        name: htop
+        state: present
+    - name: Install fff
+      pacman:
+        name: fff
+        state: present
+    - name: Install nnn
+      pacman:
+        name: nnn
+        state: present
+    - name: Install lua language server
+      pacman:
+        name: lua-language-server
+        state: present
+    - name: Install fira-code
+      pacman:
+        name: ttf-fira-code
+        state: present
+    - name: Install font awesome
+      pacman:
+        name: ttf-font-awesome
+        state: present

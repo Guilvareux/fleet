@@ -1,0 +1,43 @@
+docker run \
+  --name "/freshrss" \
+  --runtime "runc" \
+  --volume "/mnt/user/appdata/freshrss:/config:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --hostname "a9fd55491776" \
+  --expose "443/tcp" \
+  --expose "80/tcp" \
+  --env "TZ=Europe/London" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "PS1=$(whoami)@$(hostname):$(pwd)\\$ " \
+  --env "HOME=/root" \
+  --env "TERM=xterm" \
+  --env "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0" \
+  --label "build_version"="Linuxserver.io version:- 1.19.2-ls145 Build-date:- 2022-08-11T07:59:46-05:00" \
+  --label "com.docker.compose.config-hash"="9be668c0fc4b645da16f1b899d1d21820e03895c7d22b2cae26e716e7d1987d1" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="web" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansibleg3l8qvtz/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansibleg3l8qvtz" \
+  --label "com.docker.compose.service"="freshrss" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "maintainer"="aptalca" \
+  --label "org.opencontainers.image.authors"="linuxserver.io" \
+  --label "org.opencontainers.image.created"="2022-08-11T07:59:46-05:00" \
+  --label "org.opencontainers.image.description"="[Freshrss](https://freshrss.org/) is a free, self-hostable aggregator for rss feeds." \
+  --label "org.opencontainers.image.documentation"="https://docs.linuxserver.io/images/docker-freshrss" \
+  --label "org.opencontainers.image.licenses"="GPL-3.0-only" \
+  --label "org.opencontainers.image.ref.name"="7c5f4dac13ee2eb438f6ff317484a95423dcd7c7" \
+  --label "org.opencontainers.image.revision"="7c5f4dac13ee2eb438f6ff317484a95423dcd7c7" \
+  --label "org.opencontainers.image.source"="https://github.com/linuxserver/docker-freshrss" \
+  --label "org.opencontainers.image.title"="Freshrss" \
+  --label "org.opencontainers.image.url"="https://github.com/linuxserver/docker-freshrss/packages" \
+  --label "org.opencontainers.image.vendor"="linuxserver.io" \
+  --label "org.opencontainers.image.version"="1.19.2-ls145" \
+  --detach \
+  --entrypoint "/init" \
+  "docker.io/linuxserver/freshrss" \
+  

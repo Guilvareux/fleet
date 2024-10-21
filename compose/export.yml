@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  node_exporter:
+    image: prom/node-exporter
+    container_name: node_exporter
+    restart: unless-stopped
+    expose:
+      - 9100
+    networks:
+      pod-net:
+        ipv4_address: 172.22.0.81
+
+networks:
+  pod-net:
+    name: podnet

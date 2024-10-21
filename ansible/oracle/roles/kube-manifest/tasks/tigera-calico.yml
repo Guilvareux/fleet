@@ -1,0 +1,44 @@
+#- name: Install Tigera
+#  kubernetes.core.k8s:
+#    kubeconfig: "{{ kube_config }}/config"
+#    state: present
+#    definition: "{{ lookup('file', 'tigera-operator.yaml') | from_yaml_all | list }}"
+#
+#- name: Install Calico
+#  kubernetes.core.k8s:
+#    kubeconfig: "{{ kube_config }}/config"
+#    state: present
+#    definition: "{{ lookup('file', 'calico-resources.yaml') | from_yaml_all | list }}"
+
+- name: Get Tigera Operator
+  async: 45
+  poll: 0
+  ansible.builtin.get_url:
+    url: https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
+    dest: /tmp/tigera-operator.yaml
+
+- name: Get Calico Resources
+  ansible.builtin.get_url:
+    url: https://projectcalico.docs.tigera.io/manifests/custom-resources.yaml
+    dest: /tmp/calico-resources.yaml
+
+- name: Edit Calico Resources
+  ansible.builtin.replace:
+    path: /tmp/calico-resources.yaml
+    regexp: 'cidr: (\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}\/?[0-9]?[0-9]?'
+    replace: "cidr: {{ kube_cidr }}"
+
+- name: Install Tigera Operator
+  async: 45
+  poll: 0
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kube_config }}"
+    state: present
+    src: /tmp/tigera-operator.yaml
+
+- name: Install Calico Resources
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kube_config }}"
+    state: present
+    src: /tmp/calico-resources.yaml
+    wait: yes

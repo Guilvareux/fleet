@@ -1,0 +1,48 @@
+docker run \
+  --name "/sonarr" \
+  --runtime "runc" \
+  --volume "/mnt/user/appdata/sonarr:/config:rw" \
+  --volume "/mnt/user/media/downloads:/downloads:rw" \
+  --volume "/mnt/user/media/tv:/tv:rw" \
+  --volume "9edf20b24703a4b393ac068f2c55b2e17701f12b990aaeda994027f4b4f40047:/dev/rtc:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --hostname "a9fd55491776" \
+  --expose "8989/tcp" \
+  --env "affinity:container==3cd54ba3873bc032f7c39d31a93c563d118e936bba04c8de584a69a6881a00e1" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "HOME=/root" \
+  --env "LANGUAGE=en_US.UTF-8" \
+  --env "LANG=en_US.UTF-8" \
+  --env "TERM=xterm" \
+  --env "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0" \
+  --env "XDG_CONFIG_HOME=/config/xdg" \
+  --env "SONARR_BRANCH=main" \
+  --label "build_version"="Linuxserver.io version:- 3.0.9.1549-ls154 Build-date:- 2022-08-07T19:33:25+02:00" \
+  --label "com.docker.compose.config-hash"="d50f456c01d8d2ae2b5e3ad364da49568bc093493c5fe5f4173271bf76aa5cb0" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="calico" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansiblefn26yy7i/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansiblefn26yy7i" \
+  --label "com.docker.compose.service"="sonarr" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "maintainer"="aptalca" \
+  --label "org.opencontainers.image.authors"="linuxserver.io" \
+  --label "org.opencontainers.image.created"="2022-08-07T19:33:25+02:00" \
+  --label "org.opencontainers.image.description"="[Sonarr](https://sonarr.tv/) (formerly NZBdrone) is a PVR for usenet and bittorrent users. It can monitor multiple RSS feeds for new episodes of your favorite shows and will grab, sort and rename them. It can also be configured to automatically upgrade the quality of files already downloaded when a better quality format becomes available.  " \
+  --label "org.opencontainers.image.documentation"="https://docs.linuxserver.io/images/docker-sonarr" \
+  --label "org.opencontainers.image.licenses"="GPL-3.0-only" \
+  --label "org.opencontainers.image.ref.name"="b66a39a7d89e9eaeab531d9e8acd3dba9e7715f5" \
+  --label "org.opencontainers.image.revision"="b66a39a7d89e9eaeab531d9e8acd3dba9e7715f5" \
+  --label "org.opencontainers.image.source"="https://github.com/linuxserver/docker-sonarr" \
+  --label "org.opencontainers.image.title"="Sonarr" \
+  --label "org.opencontainers.image.url"="https://github.com/linuxserver/docker-sonarr/packages" \
+  --label "org.opencontainers.image.vendor"="linuxserver.io" \
+  --label "org.opencontainers.image.version"="3.0.9.1549-ls154" \
+  --detach \
+  --entrypoint "/init" \
+  "linuxserver/sonarr" \
+  

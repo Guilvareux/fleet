@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oracle-config
+data:
+  config-pv: /home/ubuntu/kubernetes/volumes/oracle-pv
+  libreddit-theme: "dark"
+  libreddit-nsfw: "on"
+  libreddit-hls: "on"
+

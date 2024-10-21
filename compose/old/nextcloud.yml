@@ -1,0 +1,58 @@
+docker run \
+  --name "/nextcloud" \
+  --runtime "runc" \
+  --volume "/mnt/user/appdata/nextcloud:/config:rw" \
+  --volume "/mnt/user/nextcloud:/data:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --publish "0.0.0.0:444:444/tcp" \
+  --publish "0.0.0.0:8011:80/tcp" \
+  --network "podnet" \
+  --network-alias "nextcloud" \
+  --network-alias "eae6d289bdc0" \
+  --hostname "eae6d289bdc0" \
+  --expose "443/tcp" \
+  --expose "444/tcp" \
+  --expose "80/tcp" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "PS1=$(whoami)@$(hostname):$(pwd)\\$ " \
+  --env "HOME=/root" \
+  --env "TERM=xterm" \
+  --env "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0" \
+  --env "NEXTCLOUD_PATH=/config/www/nextcloud" \
+  --env "LD_PRELOAD=/usr/lib/preloadable_libiconv.so" \
+  --label "build_version"="Linuxserver.io version:- 24.0.4-ls197 Build-date:- 2022-08-12T11:20:16+02:00" \
+  --label "com.docker.compose.config-hash"="459cc432fa394e9a79430c125aa5eb1a0bd0315f3e574500342697768873be01" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="media" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansiblecrcvyr06/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansiblecrcvyr06" \
+  --label "com.docker.compose.service"="nextcloud" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "maintainer"="aptalca" \
+  --label "org.opencontainers.image.authors"="linuxserver.io" \
+  --label "org.opencontainers.image.created"="2022-08-12T11:20:16+02:00" \
+  --label "org.opencontainers.image.description"="[Nextcloud](https://nextcloud.com/) gives you access to all your files wherever you are.    Where are your photos and documents? With Nextcloud you pick a server of your choice, at home, in a data center or at a provider. And that is where your files will be. Nextcloud runs on that server, protecting your data and giving you access from your desktop or mobile devices. Through Nextcloud you also access, sync and share your existing data on that FTP drive at the office, a Dropbox or a NAS you have at home.  " \
+  --label "org.opencontainers.image.documentation"="https://docs.linuxserver.io/images/docker-nextcloud" \
+  --label "org.opencontainers.image.licenses"="GPL-3.0-only" \
+  --label "org.opencontainers.image.ref.name"="f36f7620f6ec813549aebc289f3fcd16f736b694" \
+  --label "org.opencontainers.image.revision"="f36f7620f6ec813549aebc289f3fcd16f736b694" \
+  --label "org.opencontainers.image.source"="https://github.com/linuxserver/docker-nextcloud" \
+  --label "org.opencontainers.image.title"="Nextcloud" \
+  --label "org.opencontainers.image.url"="https://github.com/linuxserver/docker-nextcloud/packages" \
+  --label "org.opencontainers.image.vendor"="linuxserver.io" \
+  --label "org.opencontainers.image.version"="24.0.4-ls197" \
+  --label "traefik.docker.network"="br0darr" \
+  --label "traefik.enable"="True" \
+  --label "traefik.http.routers.nextcloud.entrypoints"="websecure" \
+  --label "traefik.http.routers.nextcloud.rule"="Host(`files.alcock.dev`)" \
+  --label "traefik.http.routers.nextcloud.tls"="True" \
+  --label "traefik.http.routers.nextcloud.tls.certresolver"="njalla" \
+  --label "traefik.http.services.nextcloud.loadbalancer.server.port"="80" \
+  --detach \
+  --entrypoint "/init" \
+  "docker.io/linuxserver/nextcloud" \
+  

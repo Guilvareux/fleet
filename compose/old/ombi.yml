@@ -1,0 +1,52 @@
+docker run \
+  --name "/ombi" \
+  --runtime "runc" \
+  --volume "/mnt/user/appdata/ombi:/config:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --publish "0.0.0.0:3579:3579/tcp" \
+  --network "podnet" \
+  --network-alias "ombi" \
+  --network-alias "cc17e25ec59d" \
+  --hostname "cc17e25ec59d" \
+  --expose "3579/tcp" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "HOME=/config" \
+  --env "LANGUAGE=en_US.UTF-8" \
+  --env "LANG=en_US.UTF-8" \
+  --env "TERM=xterm" \
+  --env "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0" \
+  --env "DEBIAN_FRONTEND=noninteractive" \
+  --label "build_version"="Linuxserver.io version:- v4.22.5-ls131 Build-date:- 2022-08-09T10:35:21+02:00" \
+  --label "com.docker.compose.config-hash"="13a6d72c2f687e94f88c05d95744bbf2cdf6163358af54ea9ada74722ed2cdbe" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="calico" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansible490p4nr0/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansible490p4nr0" \
+  --label "com.docker.compose.service"="ombi" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "maintainer"="aptalca" \
+  --label "org.opencontainers.image.authors"="linuxserver.io" \
+  --label "org.opencontainers.image.created"="2022-08-09T10:35:21+02:00" \
+  --label "org.opencontainers.image.description"="[Ombi](https://ombi.io) allows you to host your own Plex Request and user management system.  If you are sharing your Plex server with other users, allow them to request new content using an easy to manage interface!  Manage all your requests for Movies and TV with ease, leave notes for the user and get notification when a user requests something.  Allow your users to post issues against their requests so you know there is a problem with the audio etc.  Even automatically send them weekly newsletters of new content that has been added to your Plex server!" \
+  --label "org.opencontainers.image.documentation"="https://docs.linuxserver.io/images/docker-ombi" \
+  --label "org.opencontainers.image.licenses"="GPL-3.0-only" \
+  --label "org.opencontainers.image.ref.name"="d0fa4123ee119b6509bf2fcd71f693df24e63991" \
+  --label "org.opencontainers.image.revision"="d0fa4123ee119b6509bf2fcd71f693df24e63991" \
+  --label "org.opencontainers.image.source"="https://github.com/linuxserver/docker-ombi" \
+  --label "org.opencontainers.image.title"="Ombi" \
+  --label "org.opencontainers.image.url"="https://github.com/linuxserver/docker-ombi/packages" \
+  --label "org.opencontainers.image.vendor"="linuxserver.io" \
+  --label "org.opencontainers.image.version"="v4.22.5-ls131" \
+  --label "traefik.enable"="True" \
+  --label "traefik.http.routers.ombi.entrypoints"="websecure" \
+  --label "traefik.http.routers.ombi.rule"="Host(`ombi.alcock.dev`)" \
+  --label "traefik.http.routers.ombi.tls"="True" \
+  --label "traefik.http.routers.ombi.tls.certresolver"="njalla" \
+  --detach \
+  --entrypoint "/init" \
+  "linuxserver/ombi" \
+  

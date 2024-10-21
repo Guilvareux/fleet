@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: authelia-ingress
+  namespace: "{{ oracle_namespace }}"
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`"{{ domain_name }}"`)
+      kind: Rule
+      services:
+        - name: authelia-svc
+          kind: Service
+          namespace: "{{ oracle_namespace }}"
+          passHostHeader: true
+          port: 8000

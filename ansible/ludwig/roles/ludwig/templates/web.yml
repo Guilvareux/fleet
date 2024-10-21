@@ -1,0 +1,112 @@
+version: '3.9'
+services:
+  #gluetunvpn:
+  #  image: docker.io/qmcgaw/gluetun
+  #  container_name: gluetunvpn
+  #  cap_add: NET_ADMIN
+  #  environment:
+  #    - TZ=Europe/London
+  #    - VPN_SERVICE_PROVIDER=protonvpn
+  #    - VPN_TYPE=openvpn
+  #    - OPENVPN_PROTOCOL=udp
+  #    - OPENVPN_USER=L8xplgxVQDVk6uvKK3eFXEiy
+  #    - OPENVPN_PASSWORD=/7VYFjbpCcWxn9WUpGcve+JF
+  #    - OPENVPN_INTERFACE=tun0
+  #    - COUNTRY=United Kingdom
+  #    - CITY=Manchester
+  #    - FIREWALL=on
+  #    - LOG_LEVEL=info
+  #    - HTTPPROXY=on
+  #    - HTTPPROXY_PORT=8888
+  #    - HTTPPROXY_USER=paul
+  #  labels:
+  #    traefik.enable: false
+  #  restart: always
+  #  ports:
+  #    - 7878:7878
+  #    - 6789:6789
+  #    - 8989:8989
+  #    - 8010:8010
+  #    - 8080:8080
+  #    - 8090:8090
+  #    - 8085:8085
+  #    - 8086:8086
+  #    - 9091:9091
+  #    - 9696:9696
+  #    - 51413:51413
+  #  networks:
+  #    pod-net:
+  #      ipv4_address: 172.22.0.5
+  #  volumes:
+  #    - "{{ config_path }}/gluetun:/gluetun"
+
+  #language-tool:
+  #  image: erikvl87/languagetool
+  #  container_name: languagetool
+  #  restart: unless-stopped
+  #  network_mode: container:GluetunVPN
+  #  environment:
+  #    - langtool_languageModel=/ngrams
+  #    - Java_Xms=512m
+  #    - Java_XMx=1g
+  #  volumes:
+  #    - "{{ config_path }}/languagetool:/ngrams"
+  #  #depends_on:
+  #    #- GluetunVPN
+
+  searx:
+    image: docker.io/searx/searx:latest
+    container_name: searx
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/London
+    network_mode: container:GluetunVPN
+    volumes:
+      - "{{ config_path }}/searx:/etc/searx"
+    #depends_on:
+      #- GluetunVPN
+
+  libreddit:
+    image: docker.io/spikecodes/libreddit
+    container_name: libreddit
+    environment:
+      TZ: Europe/London
+      LIBREDDIT_DEFAULT_SHOW_NSFW: "on"
+      LIBREDDIT_DEFAULT_THEME: "dark"
+      LIBREDDIT_DEFAULT_USE_HLS: "on"
+    restart: unless-stopped
+    network_mode: container:GluetunVPN
+    command: libreddit --port 8090
+    #depends_on:
+      #- GluetunVPN
+
+  freshrss:
+    image: docker.io/linuxserver/freshrss
+    container_name: freshrss
+    environment:
+      - TZ=Europe/London
+    restart: unless-stopped
+    network_mode: container:GluetunVPN
+    volumes:
+      - "{{ config_path }}/freshrss:/config"
+    #depends_on:
+      #- GluetunVPN
+
+  rss-bridge:
+    image: docker.io/rssbridge/rss-bridge
+    container_name: rss-bridge
+    environment:
+      - TZ=Europe/London
+    restart: unless-stopped
+    networks:
+      pod-net:
+        ipv4_address: 172.22.0.85
+    ports:
+      - 85:80
+    volumes:
+      - "{{ config_path }}/rss-bridge/whitelist.txt:/app/whitelist.txt"
+
+networks:
+  pod-net:
+    external:
+      name: "{{ br_name }}"

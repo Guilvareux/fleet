@@ -1,0 +1,14 @@
+- name: Install Packages
+  community.general.apk:
+    name: 
+      - python3
+      - python3-dev
+      - py3-pip
+      - gcc
+      - musl-dev
+      - libffi-dev
+      - sudo
+    update_cache: yes
+
+- name: Start services
+  import_tasks: openrc.yml

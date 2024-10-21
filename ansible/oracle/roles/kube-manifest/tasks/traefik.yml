@@ -1,0 +1,91 @@
+- name: Create Namespace
+  kubernetes.core.k8s:
+    name: oracle-default
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Apply Service Account
+  kubernetes.core.k8s:
+    state: "{{ kube_state }}"
+    definition:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: traefik
+        namespace: oracle-default
+
+- name: Apply traefik Deployment
+  kubernetes.core.k8s:
+    state: "{{ kube_state }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: traefik
+        namespace: oracle-default
+        labels:
+          app: traefik
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: traefik
+        template:
+          metadata:
+            labels:
+              app: traefik
+          spec:
+            serviceAccountName: traefik-ingress-controller
+            containers:
+              - name: traefik
+                image: traefik:v2.2
+                args:
+                  - --accesslog=true
+                  - --api
+                  - --api.insecure=true
+                  - --api.dashboard=true
+                  - --entrypoints.web.address=:80
+                  - --entrypoints.websecure.address=:443
+                  - --providers.kubernetescrd=true
+                  - --providers.kubernetescrd.endpoint=http://10.0.10.206:6443
+                  - --providers.kubernetescrd.token="mc6vs8.q6c9tr2ogk3fsf6q"
+                ports:
+                  - name: web
+                    containerPort: 80
+                  - name: admin
+                    containerPort: 8080
+                  - name: websecure
+                    containerPort: 443
+
+- name: Apply traefik Service
+  kubernetes.core.k8s:
+    state: "{{ kube_state }}"
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: traefik
+        namespace: oracle-default
+      spec:
+        externalIPs: 
+          - 10.0.10.206
+        type: NodePort
+        selector:
+          app: traefik
+        ports:
+          - protocol: TCP
+            port: 80
+            name: web
+            nodePort: 30080
+              #targetPort: 80
+          - protocol: TCP
+            port: 443
+            name: websecure
+            nodePort: 30443
+              #targetPort: 80
+          - protocol: TCP
+            port: 8080
+            name: admin
+            nodePort: 32080
+              #targetPort: 8081

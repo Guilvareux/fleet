@@ -1,0 +1,126 @@
+- name: Update
+  async: 60
+  poll: 0
+  ansible.builtin.apt:
+    update_cache: yes
+    state: latest
+    pkg:
+      - apt-transport-https
+      - curl
+      - python3
+      - python3-pip
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - ipvsadm
+   
+- name: Get Kubernetes Signing Key
+  become: yes
+  async: 60
+  poll: 0
+  ansible.builtin.command:
+    cmd: curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    creates: /usr/share/keyrings/kubernetes-archive-keyring.gpg
+
+- name: Add Kubernetes Repository
+  async: 60
+  poll: 0
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main"
+    state: present
+
+- name: Install K8s and Container Packages
+  async: 60
+  poll: 0
+  ansible.builtin.apt:
+    update_cache: yes
+    state: latest
+    pkg:
+      - containerd.io
+      - kubeadm
+      - kubelet
+      - kubectl 
+      - flannel
+
+- name: Install Python3 client for Kubernetes
+  ansible.builtin.pip:
+    name: "{{ item }}"
+  loop:
+    - kubernetes
+
+- name: Probe kernel modules
+  async: 60
+  poll: 0
+  ansible.builtin.modprobe:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - br_netfilter
+    - overlay
+
+- name: Set Kernel Params
+  async: 60
+  poll: 0
+  ansible.posix.sysctl:
+    name: "{{ item }}" 
+    value: '1'
+    sysctl_set: yes
+  loop:
+    - net.ipv4.ip_forward
+    - net.bridge.bridge-nf-call-iptables
+    - net.bridge.bridge-nf-call-ip6tables
+
+- name: Enable Systemd cgroup driver
+  async: 60
+  poll: 0
+  ansible.builtin.blockinfile:
+    path: /etc/containerd/config.toml
+    marker: "## {mark} ANSIBLE MANAGED BLOCK ##"
+    block: |
+      [plugins."io.containerd.grpc.v1.cri"]
+        systemd_cgroup = true
+
+- name: Enabled plugin in containerd config
+  async: 60
+  poll: 0
+  ansible.builtin.lineinfile:
+    path: /etc/containerd/config.toml
+    regexp: ^disabled_plugins = \["cri"]$
+    line: "# disabled_plugins = [\"cri\"]"
+
+- name: Set Crictl Config
+  async: 60
+  poll: 0
+  ansible.builtin.blockinfile:
+    path: /etc/crictl.yaml
+    marker: "## {mark} ANSIBLE MANAGED BLOCK ##"
+    create: yes
+    block: |
+      runtime-endpoint: unix:///var/run/containerd/containerd.sock
+      image-endpoint: unix:///var/run/containerd/containerd.sock
+      timeout: 10
+      #debug: true
+
+- name: iptables Rule
+  ansible.builtin.iptables:
+    state: absent
+    jump: REJECT
+    chain: INPUT
+    reject_with: icmp-host-prohibited
+  become: yes
+
+- name: iptables Rule
+  ansible.builtin.iptables:
+    state: absent
+    jump: REJECT
+    chain: FORWARD
+    reject_with: icmp-host-prohibited
+  become: yes
+
+- name: Start services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  loop:
+    - containerd

@@ -1,0 +1,87 @@
+version: '3.9'
+services:
+  jellyfin:
+    image: docker.io/jellyfin/jellyfin
+    container_name: jellyfin
+    restart: unless-stopped
+    network_mode: "host"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=GPU-87a50023-7121-519c-3021-545b913062c8
+      - PUID=281
+      - PGID=281
+    group_add:
+      - "18"
+        #    ports:
+        #      - 8096:8096
+        #      - 8920:8920
+        #      - 1900:1900
+    tmpfs: /transcode
+    devices:
+      - /dev/dri/card0
+      - /dev/dri/card1
+      - /dev/dri/renderD128
+      - /dev/dri/renderD129
+    volumes:
+      - "{{ config_path }}/jellyfin:/config"
+      - "{{ film_path }}:/movies"
+      - "{{ tv_path }}:/tv"
+      - "{{ music_path }}:/music"
+      - "{{ book_path }}:/books"
+      - "{{ media_path }}/psychology:/psychology"
+      - /mnt/user/media/tiktok:/tiktok
+    deploy:
+          resources:
+            reservations:
+              devices:
+                - capabilities: [gpu]
+    labels:
+      traefik.enable: true
+      traefik.docker.network: br0darr
+      traefik.http.routers.jellyfin.rule: "Host(`video.{{ domain }}`)"
+      traefik.http.routers.jellyfin.entrypoints: "{{ traefik.securename }}"
+      traefik.http.routers.jellyfin.tls: true
+      traefik.http.routers.jellyfin.tls.certresolver: njalla
+      traefik.http.services.jellyfin.loadbalancer.server.port: 8096
+
+  nextcloud:
+    image: docker.io/linuxserver/nextcloud
+    container_name: nextcloud
+    restart: unless-stopped
+    networks:
+      podnet:
+        ipv4_address: 172.22.0.44
+    ports:
+      - 444:444
+      - 8011:80
+    volumes:
+      - "{{ config_path }}/nextcloud:/config"
+      - "/mnt/user/nextcloud:/data"
+    labels:
+      traefik.http.routers.nextcloud.rule: "Host(`files.{{ domain }}`)"
+      traefik.http.routers.nextcloud.entrypoints: "{{ traefik.securename }}"
+      traefik.http.routers.nextcloud.tls.certresolver: njalla
+      traefik.http.services.nextcloud.loadbalancer.server.port: 80
+      traefik.http.routers.nextcloud.tls: true
+      traefik.docker.network: br0darr
+      traefik.enable: true
+
+  mariadb:
+    image: linuxserver/mariadb
+    container_name: mariadb
+    restart: unless-stopped
+    networks:
+      podnet:
+        ipv4_address: 172.22.0.6
+    environment:
+      PUID: 99
+      PGID: 100
+      MYSQL_ROOT_PASSWORD: "{{ mariadb.password }}"
+    ports:
+      - 3306:3306
+    volumes:
+      - "{{ config_path }}/mariadb:/config"
+
+networks:
+  podnet:
+    external:
+      name: podnet

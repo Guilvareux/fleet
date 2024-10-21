@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: authelia-pv
+  namespace: "{{ oracle_namespace }}"
+  labels:
+    type: local
+spec:
+  storageClassName: fast
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "{{ config_path }}/authelia"
+    type: Directory
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: authelia-pvc
+  namespace: "{{ oracle_namespace }}"
+spec:
+  storageClassName: fast
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi

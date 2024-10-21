@@ -1,0 +1,14 @@
+---
+- name: Misc
+  hosts: klaus
+  gather_subset: min
+  vars_files:
+    - secrets.yml
+    - vars.yml
+  vars:
+    kube_config: "/home/ubuntu/.kube/config"
+  tasks:
+
+    - name: Deploy Services
+      include_role: 
+        name: kube-manifest

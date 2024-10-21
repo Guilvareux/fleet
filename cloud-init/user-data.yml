@@ -1,0 +1,19 @@
+#cloud-config
+
+#groups:
+#  - admingroup: [root, sys]
+#  - users
+
+users:
+  - name: paul
+    gecos: Paul
+    groups: paul
+    primary_group: paul
+    lock_passwd: false
+    ssh_authorized_keys:
+      - ssh-ed25519 key person@machine
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    groups: sudo
+    shell: /bin/bash
+
+hostname: archtower

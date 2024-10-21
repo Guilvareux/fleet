@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  traefik:
+    image: traefik:2.5
+    container_name: traefik
+    args:
+      - --global.sendanonymoususage=false
+      - --accesslog=true
+      - --ping=true
+      - --entrypoints.web.address=80
+      - --entrypoints.metrics.address=9100/tcp
+      - --entrypoints.traefik.address=9000/tcp
+      - --entrypoints.websecure.address=443
+      - --entrypoints.websecure.http.tls=true
+      - --entrypoints.websecure.http.tls.certResolver=njalla
+      - --entrypoints.websecure.http.tls.domains[0].main=alcock.dev
+      - --entrypoints.websecure.http.tls.domains[0].sans=ludwig.alcock.dev,libreddit.alcock.dev
+      - --certificatesresolvers.njalla.acme.email=paul@alcock.dev
+      - --certificatesresolvers.njalla.acme.entryPoint=websecure
+      - --certificatesresolvers.njalla.acme.dnsChallenge.provider=njalla
+      - --certificatesresolvers.njalla.acme.dnsChallenge.delayBeforeCheck=30
+      - --certificatesresolvers.njalla.acme.storage=/etc/traefik/acme.json
+    environment:
+      - "NJALLA_TOKEN={{ secrets.njalla_token }}"
+    restart: unless-stopped
+    networks:
+      pod-net:
+        ipv4_address: 172.22.1.0
+    ports:
+      - 44301:443
+      - 8001:80
+      - 8183:8183
+    volumes:
+      - "{{ cloud_conf }}/traefik:/etc/traefik"
+      - "/var/run/podman/podman.sock:/var/run/podman/podman.sock"
+
+networks:
+  pod-net:
+    external:
+      name: pod-net

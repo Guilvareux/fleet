@@ -1,0 +1,71 @@
+---
+#- name: Setup Playbook
+#  hosts: orakube
+#  gather_subset: min
+#  vars_files:
+#    - secrets.yml
+#  tasks:
+
+          #- name: Set Facts
+          #  set_fact:
+          #    kube_config: "{{ ansible_facts['user_dir'] }}/.kube/config"
+
+          #- name: Test Running State
+          #  kubernetes.core.k8s_info:
+          #    kind: Pod
+          #    field_selectors:
+          #      - status.phase=Running
+
+          #- name: TEMP
+          #  hosts: kube-master
+          #  gather_facts: false
+          #  tasks:
+          #    - name: TEMP
+          #      become: yes
+          #      ansible.builtin.shell: |
+          #        /usr/bin/kubeadm reset -f
+          #        "&&"
+          #        /usr/sbin/ipvsadm --clear
+
+- name: Setup Nodes Playbook
+  hosts: orakube
+  gather_subset: min
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Install dependencies
+      include_role:
+        name: oracle
+
+- name: Setup Leader Node
+  hosts: kube-master
+  become: yes
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Kubeadm setup
+      include_role:
+        name: kube-master
+
+          #- name: Setup Control Nodes
+          #  hosts: kube-control
+          #  become: yes
+          #  gather_facts: false
+          #  vars_files:
+          #    - vars.yml
+          #  tasks:
+          #    - name: Kubeadm setup
+          #      include_role:
+          #        name: kube-control
+
+- name: Setup Slave kubelets
+  hosts: kube-slaves
+  become: yes
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Setup Slaves
+      include_role:
+        name: kube-slave

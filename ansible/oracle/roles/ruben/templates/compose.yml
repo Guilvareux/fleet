@@ -1,0 +1,25 @@
+version: '3.9'
+services:
+  searx:
+    image: docker.io/searx/searx:latest
+    container_name: searx
+    restart: unless-stopped
+    networks:
+      "{{ br_name }}":
+        ipv4_address: 172.23.0.8
+    environment:
+      - TZ=Europe/London
+    volumes:
+      - "{{ config_path }}/searx:/etc/searx"
+    labels:
+      traefik.enable: true
+      traefik.docker.network: "{{ br_name }}"
+      traefik.http.routers.searx.rule: "Host(`searx.{{ domain }}`)"
+      traefik.http.routers.searx.entrypoints: "{{ traefik.securename }}"
+      traefik.http.routers.searx.tls: true
+      traefik.http.routers.searx.tls.certresolver: njalla
+
+networks:
+  "{{ br_name }}":
+    external:
+      name: "{{ br_name }}"

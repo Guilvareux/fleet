@@ -1,0 +1,10 @@
+- name: Setup oracle devices
+  hosts: oracle
+  gather_subset: min
+  strategy: free
+  vars_files:
+    - secrets.yml
+  tasks:
+    - name: Setup Oracle specifics
+      include_role:
+        name: oracle

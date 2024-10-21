@@ -1,0 +1,71 @@
+version: '3.9'
+services:
+  tdarr:
+    image: docker.io/haveagitgat/tdarr:latest
+    container_name: tdarr
+    environment:
+      TZ: Europe/London
+      nodeID: TdarrMaster 
+      serverIP: 172.22.0.29
+      webUIPort: '8265'
+      serverPort: '8266'
+      NVIDIA_VISIBLE_DEVICES: all 
+      NVIDIA_DRIVER_CAPABILITIES: all
+    restart: unless-stopped
+    networks:
+      podnet:
+        ipv4_address: 172.22.0.29
+    devices:
+      - /dev/dri:/dev/dri
+    logging:
+      driver: json-file
+      options:
+        max-file: '5'
+    ports:
+      - 8265:8265
+      - 8266:8266
+      - 8267:8267
+    volumes:
+      - /mnt/user/encode/tdarr:/temp
+      - "{{ config_path }}/tdarr/configs:/app/configs"
+      - "{{ config_path }}/tdarr/server:/app/server"
+      - "{{ config_path }}/tdarr/logs:/app/logs"
+      - "{{ media_path }}:/media"
+
+  tdarrnode:
+    image: docker.io/haveagitgat/tdarr_node:latest
+    container_name: tdarr_node
+    environment:
+      TZ: Europe/London
+      nodeID: TdarrSlave
+      serverIP: 172.22.0.29
+      serverPort: '8266'
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    restart: unless-stopped
+    networks:
+      podnet:
+        ipv4_address: 172.22.0.28
+    devices:
+      - /dev/dri:/dev/dri
+    logging:
+      driver: json-file
+      options:
+        max-file: '5'
+    ports:
+      - 8268:8268
+    volumes:
+      - /mnt/user/encode/tdarr:/temp
+      - "{{ media_path }}:/media"
+
+
+networks:
+  podnet:
+    external:
+      name: podnet

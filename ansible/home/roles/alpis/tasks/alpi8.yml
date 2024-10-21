@@ -1,0 +1,18 @@
+---
+- name: Deploy GluetunVPN
+  community.docker.docker_compose:
+    project_name: gluetun
+    docker_host: unix:///var/run/podman/podman.sock
+    state: present
+    definition: "{{ lookup('template', 'gluetun.yml') | from_yaml }}"
+
+- name: Wait for Gluetun
+  ansible.builtin.wait_for:
+    timeout: 60
+
+- name: Deploy services
+  community.docker.docker_compose:
+    project_name: alpi8
+    docker_host: unix:///var/run/podman/podman.sock
+    state: absent
+    definition: "{{ lookup('template', 'alpi8.yml') | from_yaml }}"

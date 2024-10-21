@@ -1,0 +1,63 @@
+version: "3.9"
+services:
+  synapse:
+    image: matrixdotorg/synapse 
+    container_name: matrix-synapse
+    restart: unless-stopped
+    networks: 
+      matrix
+    environment:
+      TZ: Europe/London
+    volumes:
+      - ${CONFPATH}/matrix:/data
+
+  whatsapp:
+    image: dock.mau.dev/mautrix/whatsapp:latest 
+    container_name: matrix-whatsapp
+    restart: unless-stopped
+    networks:
+      matrix
+    volumes:
+      - ${CONFPATH}/matrix-whatsapp:/data
+    depends_on:
+      - matrix
+
+  facebook:
+    image: dock.mau.dev/mautrix/facebook:latest
+    container_name: facebook
+    restart: unless-stopped
+    networks:
+      matrix
+    volumes:
+      - ${CONFPATH}/facebook:/data
+    depends_on:
+      - matrix
+
+  signald:
+    image: docker.io/signald/signald
+    container_name: signald
+    restart: unless-stopped
+    networks:
+      matrix
+    volumes:
+      - ${CONFPATH}/signald:/signald
+    depends_on:
+      - matrix
+
+  signal:
+    image: dock.mau.dev/mautrix/signal
+    container_name: matrix-signal
+    restart: unless-stopped
+    networks:
+      matrix
+    volumes:
+      - ${CONFPATH}/matrix-signal:/data
+    depends_on:
+      - signald
+
+networks:
+  matrix:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.80.0.0/16

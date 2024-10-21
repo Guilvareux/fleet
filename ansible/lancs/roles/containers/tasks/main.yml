@@ -1,0 +1,7 @@
+- name: Omen services
+  become: yes
+  import_tasks: unraid.yml
+
+    #- name: Unraid
+    #  become: yes
+    #  import_tasks: unraid.yml

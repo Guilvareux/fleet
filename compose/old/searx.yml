@@ -1,0 +1,50 @@
+docker run \
+  --name "/searx" \
+  --runtime "runc" \
+  --volume "/mnt/user/appdata/searx:/etc/searx:rw" \
+  --volume "90d232b74b644fdef2cf400e24d54b1d49d271aad95cdd2a060e54bd70bba7b2:/var/log/uwsgi:rw" \
+  --log-driver "json-file" \
+  --log-opt max-file="1" \
+  --log-opt max-size="50m" \
+  --restart "unless-stopped" \
+  --hostname "a9fd55491776" \
+  --expose "8080/tcp" \
+  --env "TZ=Europe/London" \
+  --env "affinity:container==274d6c6607cb3c1b542e93f4c38cfedb47aa02c8c7cfc3fd1444216471de5d72" \
+  --env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+  --env "INSTANCE_NAME=searx" \
+  --env "AUTOCOMPLETE=" \
+  --env "BASE_URL=" \
+  --env "MORTY_KEY=" \
+  --env "MORTY_URL=" \
+  --env "SEARX_SETTINGS_PATH=/etc/searx/settings.yml" \
+  --env "UWSGI_SETTINGS_PATH=/etc/searx/uwsgi.ini" \
+  --label "com.docker.compose.config-hash"="d738c4fe9abcf1518c89cce7cae363a04139109f7cd78e9ef41841c9bba4c797" \
+  --label "com.docker.compose.container-number"="1" \
+  --label "com.docker.compose.oneoff"="False" \
+  --label "com.docker.compose.project"="web" \
+  --label "com.docker.compose.project.config_files"="/tmp/ansibleg3l8qvtz/docker-compose.yml" \
+  --label "com.docker.compose.project.working_dir"="/tmp/ansibleg3l8qvtz" \
+  --label "com.docker.compose.service"="searx" \
+  --label "com.docker.compose.version"="1.29.2" \
+  --label "description"="A privacy-respecting, hackable metasearch engine." \
+  --label "maintainer"="searx <https://github.com/searx/searx>" \
+  --label "org.label-schema.build-date"="2022-08-13T10:10:43Z" \
+  --label "org.label-schema.name"="searx" \
+  --label "org.label-schema.schema-version"="1.0" \
+  --label "org.label-schema.url"="https://github.com/searx/searx" \
+  --label "org.label-schema.usage"="https://github.com/searx/searx-docker" \
+  --label "org.label-schema.vcs-ref"="319a24317edd4ad1f396f65c97e35d459face807" \
+  --label "org.label-schema.vcs-url"="https://github.com/searx/searx" \
+  --label "org.label-schema.version"="1.1.0-5-319a2431" \
+  --label "org.opencontainers.image.created"="2022-08-13T10:10:43Z" \
+  --label "org.opencontainers.image.documentation"="https://github.com/searx/searx-docker" \
+  --label "org.opencontainers.image.revision"="319a24317edd4ad1f396f65c97e35d459face807" \
+  --label "org.opencontainers.image.source"="https://github.com/searx/searx" \
+  --label "org.opencontainers.image.title"="searx" \
+  --label "org.opencontainers.image.url"="https://github.com/searx/searx" \
+  --label "org.opencontainers.image.version"="1.1.0-5-319a2431" \
+  --label "version"="1.1.0-5-319a2431" \
+  --detach \
+  "docker.io/searx/searx:latest" \
+  

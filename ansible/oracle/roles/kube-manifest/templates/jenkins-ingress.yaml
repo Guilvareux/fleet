@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jenkins
+  namespace: jenkins-ns
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`"{{ domain_name }}"`) && PathPrefix(`/jenkins`)
+      kind: Rule
+      services:
+        - name: jenkins-svc
+          kind: Service
+          namespace: jenkins-ns
+          passHostHeader: true
+          port: 8088

@@ -1,0 +1,16 @@
+- name: Setup Timezone
+  community.general.timezone:
+    name: Europe/London
+
+- name: Install Packages
+  become: yes
+  import_tasks: debian-kube.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+
+    #- name: Install Packages
+    #  import_tasks: redhat.yml
+    #  when: ansible_facts['os_family']|lower == 'redhat'
+    #
+    #- name: Install Packages
+    #  import_tasks: archlinux.yml
+    #  when: ansible_facts['os_family']|lower == 'archlinux'

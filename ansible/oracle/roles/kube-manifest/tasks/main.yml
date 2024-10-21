@@ -1,0 +1,40 @@
+#- name: Add Helm Repos
+#  kubernetes.core.helm_repository:
+#    name: traefik
+#    repo_url: https://helm.traefik.io/traefik
+
+- name: Apply Resources
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kube_config }}"
+    state: "{{ kube_state }}"
+    definition: "{{ lookup('template', '{{ item }}') | from_yaml_all | list}}"
+  loop: "{{ manifests.resources }}"
+
+    #- name: Install Helm Apps
+    #  kubernetes.core.helm:
+    #    name: traefik
+    #    update_repo_cache: yes
+    #    kubeconfig: "{{ kube_config }}"
+    #    chart_ref: traefik/traefik
+    #    release_namespace: "{{ oracle_namespace }}"
+    #    release_state: "{{ kube_state }}"
+    #    values: "{{ lookup('template', 'traefik-helm.yaml') | from_yaml }}"
+
+- name: Deploy Kube Manifests
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kube_config }}"
+    state: "{{ kube_state }}"
+    definition: "{{ lookup('template', '{{ item }}') | from_yaml_all | list}}"
+  loop: "{{ manifests.services }}"
+      
+- name: Wait for apply
+  ansible.builtin.wait_for:
+    timeout: 15
+      
+- name: Deploy Ingress
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kube_config }}"
+    state: "{{ kube_state }}"
+    definition: "{{ lookup('template', '{{ item }}') | from_yaml_all | list}}"
+  loop: "{{ manifests.ingress }}"
+
